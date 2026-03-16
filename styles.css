@@ -287,3 +287,67 @@ body{
     grid-template-columns:1fr;
   }
 } 
+
+.practice-box{
+  padding:24px;
+}
+
+.status-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:18px 0 20px;
+}
+
+.status-pill{
+  display:inline-block;
+  padding:10px 14px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  color:var(--primary-dark);
+  font-weight:bold;
+  box-shadow:var(--shadow);
+}
+
+.meter-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:16px;
+  margin-top:12px;
+}
+
+.meter-card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px 14px 12px;
+  box-shadow:var(--shadow);
+}
+
+.meter-card span{
+  display:block;
+  font-weight:bold;
+  color:var(--primary-dark);
+  margin-bottom:10px;
+}
+
+.meter-track{
+  width:100%;
+  height:12px;
+  background:#e8f3f5;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.meter-fill{
+  height:100%;
+  background:linear-gradient(90deg, var(--primary), #8ed1d6);
+  border-radius:999px;
+}
+
+@media (max-width: 860px){
+  .meter-grid{
+    grid-template-columns:1fr;
+  }
+}
