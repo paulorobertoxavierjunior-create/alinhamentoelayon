@@ -6,25 +6,41 @@
   <title>Painel • Presença</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="painel">
 
   <header class="hero">
     <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
     <div class="hero-badge">Painel do Usuário</div>
     <h1>Painel Presença</h1>
     <p class="hero-text">
-      Escolha o modo de prática. Cada caminho ajuda você a desenvolver expressão,
-      clareza e firmeza de um jeito diferente.
+      Escolha o modo de prática e acompanhe sua evolução. O sistema registra sua jornada
+      e organiza os próximos passos com base no seu uso.
     </p>
   </header>
 
   <main class="container">
 
+    <section class="cards-grid two-col">
+      <article class="card">
+        <h3>Operador</h3>
+        <p><strong>Nome:</strong> <span id="userNome">—</span></p>
+        <p><strong>Login:</strong> <span id="userLogin">—</span></p>
+        <p><strong>Alinhamento:</strong> <span id="userAlinhamento">Apto</span></p>
+      </article>
+
+      <article class="card highlight">
+        <h3>Status atual</h3>
+        <p><strong>Fase:</strong> <span id="statusFase">Expressão livre</span></p>
+        <p><strong>Sessões:</strong> <span id="statusSessoes">0</span></p>
+        <p><strong>Último modo:</strong> <span id="statusUltimoModo">Nenhum</span></p>
+      </article>
+    </section>
+
     <section class="section">
       <h2>Ambientes disponíveis</h2>
       <p>
-        O Presença foi organizado como um espaço de treino progressivo. Você pode começar
-        pela fala livre e, depois, avançar para modos mais estruturados de expressão.
+        O Presença foi organizado como um espaço de treino progressivo. Cada modo reforça
+        uma camada diferente da sua expressão.
       </p>
     </section>
 
@@ -32,7 +48,7 @@
       <article class="card">
         <h3>Fala livre</h3>
         <p>
-          Fale sobre qualquer tema e observe sua própria presença, ritmo e continuidade.
+          Fale sobre qualquer tema e observe presença, clareza, ritmo e continuidade.
         </p>
         <a class="btn" href="fala-livre.html">Entrar</a>
       </article>
@@ -40,59 +56,79 @@
       <article class="card">
         <h3>Treino de apresentação</h3>
         <p>
-          Organize suas ideias como se estivesse apresentando um projeto, uma proposta ou um tema.
+          Organize uma ideia como se estivesse diante de uma plateia, banca ou equipe.
         </p>
-        <a class="btn secondary" href="apresentacao.html">Preparar modo</a>
+        <a class="btn secondary" href="apresentacao.html">Entrar</a>
       </article>
 
       <article class="card">
         <h3>Simulação de aula</h3>
         <p>
-          Explique um assunto como se estivesse ensinando alguém. Clareza e didática ganham foco aqui.
+          Explique um tema como se estivesse ensinando alguém pela primeira vez.
         </p>
-        <a class="btn secondary" href="aula.html">Preparar modo</a>
+        <a class="btn secondary" href="aula.html">Entrar</a>
       </article>
 
       <article class="card">
         <h3>Simulação de diálogo</h3>
         <p>
-          Responda perguntas e organize o pensamento em forma de conversa guiada.
+          Responda perguntas e organize pensamento em forma de conversa guiada.
         </p>
-        <a class="btn secondary" href="dialogo.html">Preparar modo</a>
+        <a class="btn secondary" href="dialogo.html">Entrar</a>
       </article>
 
       <article class="card">
         <h3>Análise de áudio</h3>
         <p>
-          Carregue um áudio gravado e observe sinais da sua expressão com outra perspectiva.
+          Carregue um áudio já gravado e observe sua expressão por outra perspectiva.
         </p>
-        <a class="btn secondary" href="audio.html">Preparar modo</a>
+        <a class="btn secondary" href="audio.html">Entrar</a>
       </article>
 
       <article class="card highlight">
         <h3>Seu progresso</h3>
         <p>
-          Acompanhe evolução, fases e pontos fortes conforme for usando o sistema.
+          Veja histórico, fases e recomendações do seu processo de evolução.
         </p>
         <a class="btn secondary" href="progresso.html">Ver progresso</a>
       </article>
     </section>
 
     <section class="section">
-      <h2>Próximo passo natural</h2>
-      <div class="highlight-box">
-        <p>
-          Comece pela fala livre. Esse é o modo mais simples e mais importante para construir
-          a base da sua relação com a ferramenta.
-        </p>
+      <h2>Sequência sugerida</h2>
+      <div class="flow">
+        <div class="flow-step">Fala livre</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Apresentação</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Aula</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Diálogo</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Áudio</div>
       </div>
     </section>
 
+    <section class="cards-grid two-col">
+      <article class="card">
+        <h3>Leitura atual</h3>
+        <p id="painelLeituraAtual">
+          Você já está apto para continuar o processo. O próximo avanço depende de repetição consciente.
+        </p>
+      </article>
+
+      <article class="card">
+        <h3>Direção sugerida</h3>
+        <p id="painelDirecao">
+          Continue pelo modo de apresentação para fortalecer encadeamento e firmeza.
+        </p>
+      </article>
+    </section>
+
     <section class="section">
-      <div class="mini-links">
-        <a href="index.html">Página inicial</a>
-        <a href="cadastro.html">Cadastro</a>
-        <a href="alinhamento.html">Alinhamento</a>
+      <div class="btn-row">
+        <a class="btn secondary" href="index.html">Página inicial</a>
+        <button class="btn secondary" id="btnResetLocal" type="button">Resetar progresso local</button>
       </div>
     </section>
 
@@ -102,5 +138,6 @@
     <p>Presença • o painel organiza o caminho, mas quem evolui é você</p>
   </footer>
 
+  <script src="app.js"></script>
 </body>
 </html>
