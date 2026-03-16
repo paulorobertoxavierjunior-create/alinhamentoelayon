@@ -6,7 +6,7 @@
   <title>Resultado • Presença</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="resultado">
 
   <header class="hero small-hero">
     <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
@@ -23,10 +23,8 @@
     <section class="section">
       <h2>Momentos observados</h2>
       <div class="card">
-        <p>
-          Sua fala começou com leve cautela e ganhou mais estabilidade ao longo do processo.
-          Houve sinais de organização crescente do pensamento e aumento gradual de presença
-          durante a expressão.
+        <p id="resultadoMomentos">
+          Sua interação mostrou sinais iniciais de presença e organização progressiva do pensamento.
         </p>
       </div>
     </section>
@@ -34,17 +32,15 @@
     <section class="cards-grid two-col">
       <article class="card">
         <h3>Pontos fortes</h3>
-        <p>
-          Clareza de intenção, disposição para se expressar e boa continuidade na construção
-          das ideias.
+        <p id="resultadoFortes">
+          Clareza de intenção, disposição para se expressar e continuidade na construção das ideias.
         </p>
       </article>
 
       <article class="card">
         <h3>Pontos de melhoria</h3>
-        <p>
-          Vale aprofundar melhor a conclusão das ideias e dar um pouco mais de pausa entre
-          blocos de pensamento para aumentar firmeza e organização.
+        <p id="resultadoMelhorias">
+          Vale aprofundar melhor a conclusão das ideias e usar um pouco mais de pausa entre blocos de pensamento.
         </p>
       </article>
     </section>
@@ -52,7 +48,7 @@
     <section class="section">
       <h2>Leitura emocional do momento</h2>
       <div class="highlight-box">
-        <p>
+        <p id="resultadoEmocional">
           Momento de reflexão com sinais de busca por clareza e fortalecimento gradual da expressão.
         </p>
       </div>
@@ -61,14 +57,14 @@
     <section class="cards-grid two-col">
       <article class="card highlight">
         <h3>Nível de presença</h3>
-        <p>
+        <p id="resultadoNivel">
           Consistente. Você mostrou base suficiente para seguir explorando o processo com mais confiança.
         </p>
       </article>
 
       <article class="card highlight">
         <h3>Próximo passo</h3>
-        <p>
+        <p id="resultadoProximo">
           Continue praticando em outros modos. A evolução tende a aparecer quando a repetição é feita com atenção.
         </p>
       </article>
@@ -95,5 +91,8 @@
     <p>Presença • leitura construtiva para continuar avançando</p>
   </footer>
 
+  <script src="app.js"></script>
+  <script src="crs.js"></script>
+  <script src="ui.js"></script>
 </body>
 </html>
