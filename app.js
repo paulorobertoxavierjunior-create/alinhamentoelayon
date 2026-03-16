@@ -16,7 +16,7 @@ function safeRead(key, fallback = null) {
 function safeWrite(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
-
+ 
 function getUser() {
   return safeRead(PRESENCA_KEYS.user, null);
 }
