@@ -6,7 +6,7 @@
   <title>Simulação de Aula • Presença</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="aula">
 
   <header class="hero small-hero">
     <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
@@ -14,6 +14,7 @@
     <h1>Simulação de aula</h1>
     <p class="hero-text">
       Explique um tema como se estivesse ensinando alguém pela primeira vez.
+      Aqui, presença e compreensão se encontram na didática.
     </p>
   </header>
 
@@ -22,47 +23,74 @@
     <section class="section">
       <h2>Proposta do modo</h2>
       <p>
-        Neste ambiente, a ideia não é apenas falar bem. É conseguir tornar um tema compreensível.
-        O sistema observa a sua capacidade de simplificar, organizar e conduzir o pensamento de quem escuta.
+        Neste ambiente, a ideia não é apenas falar bem. É tornar um tema compreensível.
+        O sistema observa sua capacidade de simplificar, organizar e conduzir o pensamento
+        de quem escuta.
+      </p>
+      <p>
+        Ensinar é um dos testes mais sinceros da compreensão.
       </p>
     </section>
 
     <section class="card practice-box">
-      <h3 style="margin-top:0;">Foco da observação</h3>
+      <h3 style="margin-top:0;">Microfone e mostragem</h3>
+      <p>
+        Ao ativar a captação, o sistema observa como sua fala organiza uma explicação
+        e sustenta o processo de ensino.
+      </p>
+
+      <div class="status-row">
+        <div class="status-pill">Modo: simulação de aula</div>
+        <div class="status-pill">Foco: didática e sequência</div>
+      </div>
+
+      <p><strong>Status da captação:</strong> <span id="crsStatus">aguardando</span></p>
 
       <div class="meter-grid">
         <div class="meter-card">
-          <span>Didática</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 24%;"></div></div>
+          <span>Presença • <small data-crs-label="presenca">18%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width: 18%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Sequência lógica</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 22%;"></div></div>
+          <span>Clareza • <small data-crs-label="clareza">24%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width: 24%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Clareza</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 20%;"></div></div>
+          <span>Ritmo • <small data-crs-label="ritmo">16%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width: 16%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Continuidade</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 18%;"></div></div>
+          <span>Firmeza • <small data-crs-label="firmeza">20%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width: 20%;"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Continuidade • <small data-crs-label="continuidade">14%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width: 14%;"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Estabilidade • <small data-crs-label="estabilidade">22%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width: 22%;"></div></div>
         </div>
       </div>
 
       <div class="hero-actions" style="justify-content:flex-start; margin-top:24px;">
-        <a class="btn" href="resultado.html">Iniciar avaliação</a>
-        <a class="btn secondary" href="painel.html">Voltar ao painel</a>
+        <button class="btn" id="btnStartCRS" type="button">Ativar microfone</button>
+        <button class="btn secondary" id="btnRegistrarSessao" type="button">Finalizar e avaliar</button>
+        <a class="btn ghost" href="painel.html">Voltar ao painel</a>
       </div>
     </section>
 
     <section class="section">
+      <h2>Dica do processo</h2>
       <div class="highlight-box">
         <p>
-          Ensinar é um dos testes mais sinceros da compreensão. Quando você consegue explicar,
-          também começa a se escutar de outro modo.
+          Quando você consegue explicar com simplicidade, seu pensamento começa a revelar
+          não apenas o que sabe, mas como organiza o que sabe.
         </p>
       </div>
     </section>
@@ -70,8 +98,11 @@
   </main>
 
   <footer class="footer">
-    <p>Presença • ensinar como forma de consolidar entendimento</p>
+    <p>Presença • ensinar como forma de consolidar clareza e entendimento</p>
   </footer>
 
-</body> 
+  <script src="app.js"></script>
+  <script src="crs.js"></script>
+  <script src="ui.js"></script>
+</body>
 </html>
