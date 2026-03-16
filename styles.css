@@ -244,3 +244,46 @@ body{
     text-align:center;
   }
 }
+
+.form-card{
+  padding:24px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:18px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.field label{
+  font-weight:bold;
+  color:var(--primary-dark);
+}
+
+.field input{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 14px;
+  font-size:16px;
+  background:#fff;
+  color:var(--text);
+  outline:none;
+}
+
+.field input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 3px rgba(105,188,195,0.12);
+}
+
+@media (max-width: 860px){
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+}
