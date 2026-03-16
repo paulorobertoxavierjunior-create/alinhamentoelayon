@@ -6,14 +6,15 @@
   <title>Fala Livre • Presença</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="fala-livre">
 
   <header class="hero small-hero">
     <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
     <div class="hero-badge">Modo de prática</div>
     <h1>Fala livre</h1>
     <p class="hero-text">
-      Fale sobre qualquer tema. O importante aqui é observar como sua expressão se organiza.
+      Fale sobre qualquer tema e observe como sua expressão se organiza.
+      Aqui, o importante não é acertar. É perceber.
     </p>
   </header>
 
@@ -22,61 +23,64 @@
     <section class="section">
       <h2>Proposta do modo</h2>
       <p>
-        Escolha um tema simples, algo que esteja vivo em você neste momento, e fale por alguns
-        segundos. Pode ser uma ideia, uma reflexão, um objetivo, uma dúvida ou uma percepção.
+        Escolha um tema simples, algo vivo em você neste momento, e fale por alguns segundos.
+        Pode ser uma ideia, uma dúvida, um objetivo, uma percepção ou uma reflexão.
       </p>
       <p>
-        Nesta fase, o foco não é acertar. O foco é perceber.
+        O sistema acompanha sua expressão e devolve uma leitura construtiva do processo.
       </p>
     </section>
 
     <section class="card practice-box">
       <h3 style="margin-top:0;">Microfone e mostragem</h3>
       <p>
-        Ao iniciar, o sistema vai acompanhar sua fala e, mais adiante, preencher barras de leitura
-        relacionadas à sua expressão.
+        Ao ativar a captação, o sistema começa a observar sinais da sua fala
+        e preenche as barras em tempo real.
       </p>
 
       <div class="status-row">
-        <div class="status-pill">Microfone: aguardando ativação</div>
         <div class="status-pill">Modo: fala livre</div>
+        <div class="status-pill">Microfone: ativo sob comando</div>
       </div>
+
+      <p><strong>Status da captação:</strong> <span id="crsStatus">aguardando</span></p>
 
       <div class="meter-grid">
         <div class="meter-card">
-          <span>Presença</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 18%;"></div></div>
+          <span>Presença • <small data-crs-label="presenca">18%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width: 18%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Clareza</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 24%;"></div></div>
+          <span>Clareza • <small data-crs-label="clareza">24%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width: 24%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Ritmo</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 16%;"></div></div>
+          <span>Ritmo • <small data-crs-label="ritmo">16%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width: 16%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Firmeza</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 20%;"></div></div>
+          <span>Firmeza • <small data-crs-label="firmeza">20%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width: 20%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Continuidade</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 14%;"></div></div>
+          <span>Continuidade • <small data-crs-label="continuidade">14%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width: 14%;"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Estabilidade</span>
-          <div class="meter-track"><div class="meter-fill" style="width: 22%;"></div></div>
+          <span>Estabilidade • <small data-crs-label="estabilidade">22%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width: 22%;"></div></div>
         </div>
       </div>
 
       <div class="hero-actions" style="justify-content:flex-start; margin-top:24px;">
-        <a class="btn" href="resultado.html">Iniciar avaliação</a>
-        <a class="btn secondary" href="painel.html">Voltar ao painel</a>
+        <button class="btn" id="btnStartCRS" type="button">Ativar microfone</button>
+        <button class="btn secondary" id="btnRegistrarSessao" type="button">Finalizar e avaliar</button>
+        <a class="btn ghost" href="painel.html">Voltar ao painel</a>
       </div>
     </section>
 
@@ -84,8 +88,8 @@
       <h2>Dica do processo</h2>
       <div class="highlight-box">
         <p>
-          Fale como você está. Não tente parecer perfeito. A sinceridade costuma revelar mais
-          sobre presença do que a tentativa de performance.
+          Fale como você está. A sinceridade costuma revelar mais sobre presença
+          do que a tentativa de performance.
         </p>
       </div>
     </section>
@@ -96,9 +100,8 @@
     <p>Presença • fala livre como primeiro espelho da consciência</p>
   </footer>
 
-<script src="app.js"></script>
-<script src="crs.js"></script>
-<script src="ui.js"></script>
-
+  <script src="app.js"></script>
+  <script src="crs.js"></script>
+  <script src="ui.js"></script>
 </body>
 </html>
