@@ -3,110 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Análise de Áudio • Presença</title>
+  <title>Elayon • Áudio</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="audio">
 
-  <header class="hero small-hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Modo de prática</div>
-    <h1>Análise de áudio</h1>
-    <p class="hero-text">
-      Envie um áudio e observe sua expressão por outra perspectiva.
-      Escutar a si mesmo também é uma forma de aprender.
-    </p>
-  </header>
+  <main class="page-shell">
+    <section class="topbar">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
+      <div>
+        <div class="topbar-title">Análise de áudio</div>
+        <div class="topbar-sub">Escutar a si mesmo com mais distância</div>
+      </div>
+    </section>
 
-  <main class="container">
-
-    <section class="section">
-      <h2>Proposta do modo</h2>
+    <section class="hero-box">
+      <h1>Analise uma fala gravada</h1>
       <p>
-        Este ambiente permite analisar um áudio já gravado, como uma fala, ensaio,
-        apresentação, aula ou reflexão. O objetivo é observar presença, clareza,
-        ritmo e firmeza com mais distância.
-      </p>
-      <p>
-        Nesta etapa, o fluxo já está pronto para apresentação e evolução da ferramenta.
+        Use este modo para revisar uma fala, uma apresentação ou uma reflexão já registrada.
+        O foco é observar sua expressão com outra perspectiva.
       </p>
     </section>
 
-    <section class="card form-card">
-      <h3 style="margin-top:0;">Carregar áudio</h3>
-      <p>
-        Selecione um arquivo de áudio e prepare a análise.
-      </p>
-
-      <div class="field" style="margin-top:16px;">
-        <label for="arquivo-audio">Escolher arquivo</label>
-        <input id="arquivo-audio" type="file" accept="audio/*">
+    <section class="panel-box">
+      <div class="status-row">
+        <div class="status-pill">Modo: áudio</div>
+        <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
       </div>
-
-      <div class="status-row" style="margin-top:18px;">
-        <div class="status-pill">Modo: análise de áudio</div>
-        <div class="status-pill">Foco: escuta e revisão</div>
-      </div>
-
-      <p><strong>Status da captação:</strong> <span id="crsStatus">arquivo aguardando análise</span></p>
 
       <div class="meter-grid">
         <div class="meter-card">
-          <span>Presença • <small data-crs-label="presenca">18%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width: 18%;"></div></div>
+          <span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Clareza • <small data-crs-label="clareza">24%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width: 24%;"></div></div>
+          <span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Ritmo • <small data-crs-label="ritmo">16%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width: 16%;"></div></div>
+          <span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Firmeza • <small data-crs-label="firmeza">20%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width: 20%;"></div></div>
+          <span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Continuidade • <small data-crs-label="continuidade">14%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width: 14%;"></div></div>
+          <span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Estabilidade • <small data-crs-label="estabilidade">22%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width: 22%;"></div></div>
+          <span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div>
         </div>
-      </div>
-
-      <div class="hero-actions" style="justify-content:flex-start; margin-top:24px;">
-        <button class="btn" id="btnStartCRS" type="button">Preparar análise</button>
-        <button class="btn secondary" id="btnRegistrarSessao" type="button">Analisar e avaliar</button>
-        <a class="btn ghost" href="painel.html">Voltar ao painel</a>
       </div>
     </section>
 
-    <section class="section">
-      <h2>Dica do processo</h2>
-      <div class="highlight-box">
+    <section class="cta-row">
+      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
+      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
+      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
+      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
+    </section>
+
+    <section class="message-box">
+      <p id="painelMensagem">
+        Escutar a si mesmo de fora pode revelar firmeza, ritmo, hesitação e clareza com mais honestidade.
+      </p>
+    </section>
+
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Dica do modo</h3>
         <p>
-          Quando você se escuta de fora, camadas da sua expressão aparecem com mais nitidez.
-          O áudio pode revelar firmeza, hesitação, ritmo e clareza de um jeito muito honesto.
+          Use esse espaço para revisão consciente. O objetivo aqui é observar e aprender.
         </p>
-      </div>
+      </article>
+
+      <article class="quick-card">
+        <h3>Navegação</h3>
+        <p>
+          A leitura final será registrada no mesmo fluxo de progresso do sistema.
+        </p>
+        <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
+      </article>
     </section>
 
+    <div class="footer-note">Ouvir a própria trajetória também é treino de presença.</div>
   </main>
 
-  <footer class="footer">
-    <p>Presença • escutar a si mesmo também é uma forma de crescer</p>
-  </footer>
-
-  <script src="app.js"></script>
-  <script src="crs.js"></script>
-  <script src="ui.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
