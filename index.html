@@ -3,113 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Presença</title>
+  <title>Elayon • Conexão</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="index">
 
-  <header class="hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Presença • Formação do Operador Humano</div>
-    <h1>Presença</h1>
-    <p class="hero-text">
-      Um espaço de treino, auto-observação e fortalecimento da expressão humana.
-      Aqui, ciência e tecnologia ajudam você a perceber melhor sua fala, sua presença
-      e sua clareza antes de avançar para ferramentas mais poderosas.
-    </p>
+  <main class="entry-shell">
+    <section class="entry-card">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
 
-    <div class="hero-actions">
-      <a class="btn" href="cadastro.html">Começar</a>
-      <a class="btn secondary" href="#proposta">Entender a proposta</a>
-    </div>
-  </header>
+      <div class="entry-badge">Humanidade e Tecnologia em Harmonia</div>
 
-  <main class="container">
-
-    <section id="proposta" class="section">
-      <h2>Uma tecnologia para se ouvir melhor</h2>
-      <p>
-        O Presença foi criado para ajudar o usuário a observar a própria expressão,
-        fortalecer clareza, ritmo, firmeza e consciência durante a fala, e se preparar
-        para interações mais avançadas dentro do ecossistema Elayon.
+      <h1 class="entry-title">Elayon</h1>
+      <p class="entry-subtitle">
+        Presença consciente. Automação ética. Mais tempo para viver o Amor ao redor.
       </p>
-      <p>
-        A proposta aqui não é julgar nem rotular. É refletir sinais do seu processo
-        e devolver uma leitura simples, humana e construtiva.
+
+      <form id="loginForm" class="entry-form">
+        <label for="login">Login</label>
+        <input id="login" name="login" type="text" placeholder="Seu login" required>
+
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="text" placeholder="Senha visível para apresentação" required>
+
+        <button class="btn-primary" type="submit">Conectar Elayon PC</button>
+      </form>
+
+      <p class="entry-note">
+        Não precisa ser cientista. Basta estar presente e consciente.
       </p>
     </section>
-
-    <section class="cards-grid">
-      <article class="card">
-        <h3>Auto-observação</h3>
-        <p>
-          Observe sua forma de falar, organizar pensamentos e sustentar ideias com mais calma.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Treino de expressão</h3>
-        <p>
-          Fala livre, apresentação, aula e diálogo para fortalecer clareza e presença.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Leitura orientadora</h3>
-        <p>
-          O sistema mostra pontos fortes, melhorias e momentos observados durante sua interação.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Preparação consciente</h3>
-        <p>
-          O objetivo é preparar o humano para usar tecnologia com mais responsabilidade e firmeza.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <h2>Como o fluxo funciona</h2>
-
-      <div class="flow">
-        <div class="flow-step">Cadastro</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Alinhamento</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Painel</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Fala</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Leitura</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Progresso</div>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Primeira visão do caminho</h2>
-      <div class="highlight-box">
-        <p>
-          O Presença será a base formativa do operador humano dentro do ecossistema Elayon.
-          Antes da automação, vem a consciência. Antes da execução, vem a presença.
-        </p>
-      </div>
-    </section>
-
-    <section class="section cta-section">
-      <h2>Entrar no processo</h2>
-      <p>
-        Comece pelo cadastro e siga para a próxima camada do sistema.
-      </p>
-      <a class="btn" href="cadastro.html">Ir para cadastro</a>
-    </section>
-
   </main>
 
-  <footer class="footer">
-    <p>Presença • autoconhecimento, expressão e consciência em evolução</p>
-  </footer>
-
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
