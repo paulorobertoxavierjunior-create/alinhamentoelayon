@@ -3,99 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Progresso • Presença</title>
+  <title>Elayon • Progresso</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="progresso">
 
-  <header class="hero small-hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Mapa de evolução</div>
-    <h1>Seu progresso</h1>
-    <p class="hero-text">
-      O Presença organiza sua jornada em etapas simples, para que você perceba onde já avançou
-      e onde ainda pode crescer.
-    </p>
-  </header>
-
-  <main class="container">
-
-    <section class="section">
-      <h2>Fases do caminho</h2>
-      <div class="flow">
-        <div class="flow-step">Expressão livre</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Organização</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Clareza</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Firmeza</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Expansão</div>
+  <main class="page-shell">
+    <section class="topbar">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
+      <div>
+        <div class="topbar-title">Seu progresso</div>
+        <div class="topbar-sub">Mapa de evolução no sistema</div>
       </div>
     </section>
 
-    <section class="cards-grid">
-      <article class="card">
-        <h3>Fase atual</h3>
-        <p>
-          Organização. Sua expressão já mostra base para avançar além da fala espontânea
-          e ganhar mais estrutura.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Ponto mais forte</h3>
-        <p>
-          Continuidade. Você mantém o fluxo da fala com boa constância quando assume a própria voz.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Ponto em crescimento</h3>
-        <p>
-          Firmeza. Ainda há espaço para concluir ideias com mais sustentação e segurança.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Direção sugerida</h3>
-        <p>
-          Treino de apresentação e simulação de aula devem ajudar a fortalecer clareza e presença.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <h2>Resumo da jornada</h2>
-      <div class="highlight-box">
-        <p>
-          O processo já mostra avanço. A presença apareceu, a fala encontrou base e o caminho
-          agora é consolidar clareza e firmeza.
-        </p>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2>Seguir evoluindo</h2>
+    <section class="hero-box">
+      <h1>Evolução em fases</h1>
       <p>
-        A progressão não depende de perfeição. Ela depende de repetição consciente,
-        escuta honesta e disposição para continuar.
+        O Elayon organiza o caminho em etapas simples para que você perceba seu avanço
+        em presença, clareza e prontidão para automação assistida.
       </p>
     </section>
 
-    <section class="section cta-section">
-      <div class="btn-row" style="justify-content:center;">
-        <a class="btn" href="painel.html">Voltar ao painel</a>
-        <a class="btn secondary" href="fala-livre.html">Praticar novamente</a>
-      </div>
+    <section class="phase-grid">
+      <article class="phase-card active">
+        <span class="phase-number">1</span>
+        <h3>Inato</h3>
+        <p>Primeiro contato, observação e percepção de si.</p>
+      </article>
+
+      <article class="phase-card">
+        <span class="phase-number">2</span>
+        <h3>Treinamento</h3>
+        <p>Repetição consciente com leitura mais firme.</p>
+      </article>
+
+      <article class="phase-card">
+        <span class="phase-number">3</span>
+        <h3>Apto</h3>
+        <p>Prontidão para avançar à conexão operacional.</p>
+      </article>
     </section>
 
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Fase atual</h3>
+        <p id="faseAtualPainel">Inato</p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Total de sessões</h3>
+        <p id="totalSessoesPainel">0</p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Último score</h3>
+        <p id="ultimoScorePainel">0</p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Direção sugerida</h3>
+        <p id="direcaoPainel">Continue praticando com calma e constância.</p>
+      </article>
+    </section>
+
+    <section class="cta-row">
+      <a class="btn-secondary" href="fala-livre.html">Treinar novamente</a>
+      <a class="btn-primary" href="checkout.html">Seguir para adesão</a>
+    </section>
+
+    <div class="footer-note">O progresso não vem da pressa. Vem da repetição consciente.</div>
   </main>
 
-  <footer class="footer">
-    <p>Presença • o progresso acontece quando você se vê com clareza</p>
-  </footer>
-
+  <script src="js/config.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
