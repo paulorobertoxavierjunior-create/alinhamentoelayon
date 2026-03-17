@@ -4,7 +4,16 @@
     if (el) el.textContent = text;
   }
 
-  function bindPainel() {
+  function hydrateUser() {
+    const auth = JSON.parse(localStorage.getItem("elayon_auth") || "null");
+    const progress = window.ELAYON_ENGINE ? window.ELAYON_ENGINE.getProgress() : { fase: "Inato", sessoes: 0 };
+
+    if (auth?.login) setText("painelLogin", `Operador: ${auth.login}`);
+    setText("faseAtualPainel", progress.fase || "Inato");
+    setText("totalSessoesPainel", String(progress.sessoes || 0));
+  }
+
+  function bindCRSControls() {
     const btnStart = document.getElementById("btnStartCRS");
     const btnPause = document.getElementById("btnPauseCRS");
     const btnRestart = document.getElementById("btnRestartCRS");
@@ -55,6 +64,15 @@
           btnConectarPC.classList.remove("btn-secondary");
           btnConectarPC.classList.add("btn-primary");
         }
+
+        localStorage.setItem("elayon_last_result", JSON.stringify({
+          snapshot,
+          result
+        }));
+
+        if (document.body.dataset.page === "fala-livre") {
+          window.location.href = "resultado.html";
+        }
       });
     }
 
@@ -70,17 +88,8 @@
     }
   }
 
-  function hydratePainel() {
-    const auth = JSON.parse(localStorage.getItem("elayon_auth") || "null");
-    const progress = window.ELAYON_ENGINE.getProgress();
-
-    if (auth?.login) setText("painelLogin", `Operador: ${auth.login}`);
-    setText("faseAtualPainel", progress.fase);
-    setText("totalSessoesPainel", String(progress.sessoes));
-  }
-
   document.addEventListener("DOMContentLoaded", () => {
-    hydratePainel();
-    bindPainel();
+    hydrateUser();
+    bindCRSControls();
   });
 })();
