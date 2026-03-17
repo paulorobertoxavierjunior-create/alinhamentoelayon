@@ -3,96 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resultado • Presença</title>
+  <title>Elayon • Resultado</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="resultado">
 
-  <header class="hero small-hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Leitura do processo</div>
-    <h1>Resultado da interação</h1>
-    <p class="hero-text">
-      A leitura abaixo organiza sinais da sua fala e devolve uma interpretação simples,
-      humana e construtiva do momento.
-    </p>
-  </header>
-
-  <main class="container">
-
-    <section class="section">
-      <h2>Momentos observados</h2>
-      <div class="card">
-        <p id="resultadoMomentos">
-          Sua interação mostrou sinais iniciais de presença e organização progressiva do pensamento.
-        </p>
+  <main class="page-shell">
+    <section class="topbar">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
+      <div>
+        <div class="topbar-title">Leitura da sessão</div>
+        <div class="topbar-sub">Resultado construtivo do seu processo</div>
       </div>
     </section>
 
-    <section class="cards-grid two-col">
-      <article class="card">
-        <h3>Pontos fortes</h3>
-        <p id="resultadoFortes">
-          Clareza de intenção, disposição para se expressar e continuidade na construção das ideias.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Pontos de melhoria</h3>
-        <p id="resultadoMelhorias">
-          Vale aprofundar melhor a conclusão das ideias e usar um pouco mais de pausa entre blocos de pensamento.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <h2>Leitura emocional do momento</h2>
-      <div class="highlight-box">
-        <p id="resultadoEmocional">
-          Momento de reflexão com sinais de busca por clareza e fortalecimento gradual da expressão.
-        </p>
-      </div>
-    </section>
-
-    <section class="cards-grid two-col">
-      <article class="card highlight">
-        <h3>Nível de presença</h3>
-        <p id="resultadoNivel">
-          Consistente. Você mostrou base suficiente para seguir explorando o processo com mais confiança.
-        </p>
-      </article>
-
-      <article class="card highlight">
-        <h3>Próximo passo</h3>
-        <p id="resultadoProximo">
-          Continue praticando em outros modos. A evolução tende a aparecer quando a repetição é feita com atenção.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <h2>Agradecimento</h2>
+    <section class="hero-box">
+      <h1>Você se mostrou no processo</h1>
       <p>
-        Obrigado por permitir essa observação do seu processo. Evolução começa quando temos coragem
-        de nos escutar com honestidade.
+        O sistema organizou os sinais da sua fala para devolver uma leitura simples,
+        útil e orientadora do momento.
       </p>
     </section>
 
-    <section class="section cta-section">
-      <div class="btn-row" style="justify-content:center;">
-        <a class="btn" href="progresso.html">Ver progresso</a>
-        <a class="btn secondary" href="painel.html">Voltar ao painel</a>
-      </div>
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Momento observado</h3>
+        <p id="resultadoMomentos">
+          Sua sessão mostrou sinais iniciais de presença e organização progressiva da expressão.
+        </p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Leitura do momento</h3>
+        <p id="resultadoEmocional">
+          Momento de observação inicial, com espaço real para fortalecimento.
+        </p>
+      </article>
     </section>
 
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Pontos fortes</h3>
+        <p id="resultadoFortes">
+          Clareza de intenção, disposição para se expressar e continuidade no processo.
+        </p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Pontos de melhoria</h3>
+        <p id="resultadoMelhorias">
+          Vale observar melhor pausas longas, firmeza da conclusão e estabilidade do ritmo.
+        </p>
+      </article>
+    </section>
+
+    <section class="panel-box">
+      <div class="status-row">
+        <div class="status-pill">Nível: <span id="resultadoNivel">Em construção</span></div>
+        <div class="status-pill">Score: <span id="resultadoScore">0</span></div>
+        <div class="status-pill">Fase: <span id="resultadoFase">Inato</span></div>
+      </div>
+
+      <p id="resultadoProximo">
+        Continue praticando. O próximo passo é repetir a sessão com mais presença e clareza.
+      </p>
+    </section>
+
+    <section class="cta-row">
+      <a class="btn-secondary" href="fala-livre.html">Praticar de novo</a>
+      <a class="btn-secondary" href="progresso.html">Ver progresso</a>
+      <a class="btn-primary" href="checkout.html">Avançar</a>
+    </section>
+
+    <div class="footer-note">Ver-se com clareza já é uma forma de avanço.</div>
   </main>
 
-  <footer class="footer">
-    <p>Presença • leitura construtiva para continuar avançando</p>
-  </footer>
-
-  <script src="app.js"></script>
-  <script src="crs.js"></script>
-  <script src="ui.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
