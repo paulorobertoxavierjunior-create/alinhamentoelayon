@@ -3,105 +3,104 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulação de Diálogo • Presença</title>
+  <title>Elayon • Diálogo</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="dialogo">
 
-  <header class="hero small-hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Modo de prática</div>
-    <h1>Simulação de diálogo</h1>
-    <p class="hero-text">
-      Organize o pensamento em forma de conversa. Responder bem também é uma arte.
-    </p>
-  </header>
+  <main class="page-shell">
+    <section class="topbar">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
+      <div>
+        <div class="topbar-title">Simulação de diálogo</div>
+        <div class="topbar-sub">Resposta, escuta e organização</div>
+      </div>
+    </section>
 
-  <main class="container">
-
-    <section class="section">
-      <h2>Proposta do modo</h2>
+    <section class="hero-box">
+      <h1>Dialogue com uma ideia</h1>
       <p>
-        Este modo simula uma conversa em que você responde perguntas e sustenta seu pensamento
-        diante de provocações simples. O foco aqui é observar argumentação, escuta interna,
-        resposta e flexibilidade.
+        Responda como se estivesse em uma conversa real. O foco é observar como você sustenta
+        pensamento, escuta e resposta.
       </p>
     </section>
 
-    <section class="card practice-box">
-      <h3 style="margin-top:0;">Pergunta-base</h3>
-
-      <div class="highlight-box">
-        <p>
-          O que você considera mais importante em uma tecnologia voltada ao ser humano:
-          eficiência, cuidado ou consciência? Explique.
-        </p>
+    <section class="panel-box">
+      <div class="status-row">
+        <div class="status-pill">Modo: diálogo</div>
+        <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
       </div>
-
-      <div class="status-row" style="margin-top:18px;">
-        <div class="status-pill">Modo: simulação de diálogo</div>
-        <div class="status-pill">Foco: argumentação e escuta</div>
-      </div>
-
-      <p><strong>Status da captação:</strong> <span id="crsStatus">aguardando</span></p>
 
       <div class="meter-grid">
         <div class="meter-card">
-          <span>Presença • <small data-crs-label="presenca">18%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width: 18%;"></div></div>
+          <span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Clareza • <small data-crs-label="clareza">24%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width: 24%;"></div></div>
+          <span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Ritmo • <small data-crs-label="ritmo">16%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width: 16%;"></div></div>
+          <span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Firmeza • <small data-crs-label="firmeza">20%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width: 20%;"></div></div>
+          <span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Continuidade • <small data-crs-label="continuidade">14%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width: 14%;"></div></div>
+          <span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div>
         </div>
 
         <div class="meter-card">
-          <span>Estabilidade • <small data-crs-label="estabilidade">22%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width: 22%;"></div></div>
+          <span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div>
         </div>
-      </div>
-
-      <div class="hero-actions" style="justify-content:flex-start; margin-top:24px;">
-        <button class="btn" id="btnStartCRS" type="button">Ativar microfone</button>
-        <button class="btn secondary" id="btnRegistrarSessao" type="button">Responder e avaliar</button>
-        <a class="btn ghost" href="painel.html">Voltar ao painel</a>
       </div>
     </section>
 
-    <section class="section">
-      <h2>Dica do processo</h2>
-      <div class="highlight-box">
+    <section class="cta-row">
+      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
+      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
+      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
+      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
+    </section>
+
+    <section class="message-box">
+      <p id="painelMensagem">
+        No diálogo, o pensamento aparece não só no que se diz, mas no modo como se responde.
+      </p>
+    </section>
+
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Dica do modo</h3>
         <p>
-          Em um diálogo verdadeiro, o pensamento se mostra não apenas no que se afirma,
-          mas também no modo como se acolhe a pergunta.
+          Responda sem pressa. Uma boa resposta nasce de uma boa escuta interior.
         </p>
-      </div>
+      </article>
+
+      <article class="quick-card">
+        <h3>Navegação</h3>
+        <p>
+          Depois da sessão, revise o resultado e acompanhe seu avanço.
+        </p>
+        <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
+      </article>
     </section>
 
+    <div class="footer-note">Dialogar bem também é uma forma de clareza.</div>
   </main>
 
-  <footer class="footer">
-    <p>Presença • diálogo como espelho da organização interior</p>
-  </footer>
-
-  <script src="app.js"></script>
-  <script src="crs.js"></script>
-  <script src="ui.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
