@@ -3,141 +3,101 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel • Presença</title>
+  <title>Elayon • Painel</title>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body data-page="painel"> 
+<body data-page="painel">
 
-  <header class="hero">
-    <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="hero-logo">
-    <div class="hero-badge">Painel do Usuário</div>
-    <h1>Painel Presença</h1>
-    <p class="hero-text">
-      Escolha o modo de prática e acompanhe sua evolução. O sistema registra sua jornada
-      e organiza os próximos passos com base no seu uso.
-    </p>
-  </header>
-
-  <main class="container">
-
-    <section class="cards-grid two-col">
-      <article class="card">
-        <h3>Operador</h3>
-        <p><strong>Nome:</strong> <span id="userNome">—</span></p>
-        <p><strong>Login:</strong> <span id="userLogin">—</span></p>
-        <p><strong>Alinhamento:</strong> <span id="userAlinhamento">Apto</span></p>
-      </article>
-
-      <article class="card highlight">
-        <h3>Status atual</h3>
-        <p><strong>Fase:</strong> <span id="statusFase">Expressão livre</span></p>
-        <p><strong>Sessões:</strong> <span id="statusSessoes">0</span></p>
-        <p><strong>Último modo:</strong> <span id="statusUltimoModo">Nenhum</span></p>
-      </article>
+  <main class="page-shell">
+    <section class="topbar">
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
+      <div>
+        <div class="topbar-title">Painel Elayon</div>
+        <div class="topbar-sub" id="painelLogin">Operador</div>
+      </div>
     </section>
 
-    <section class="section">
-      <h2>Ambientes disponíveis</h2>
+    <section class="hero-box">
+      <h1>Faça-se presente</h1>
       <p>
-        O Presença foi organizado como um espaço de treino progressivo. Cada modo reforça
-        uma camada diferente da sua expressão.
+        Fale, observe e ajuste. O sistema acompanha sua interação para ajudar você a ganhar clareza antes da automação.
       </p>
     </section>
 
-    <section class="cards-grid">
-      <article class="card">
+    <section class="panel-box">
+      <div class="status-row">
+        <div class="status-pill">Fase: <span id="faseAtualPainel">Inato</span></div>
+        <div class="status-pill">Sessões: <span id="totalSessoesPainel">0</span></div>
+        <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
+      </div>
+
+      <div class="meter-grid">
+        <div class="meter-card">
+          <span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div>
+        </div>
+
+        <div class="meter-card">
+          <span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span>
+          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-row">
+      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
+      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
+      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
+      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
+    </section>
+
+    <section class="message-box">
+      <p id="painelMensagem">
+        Comece com calma. A fala nutre as barras. O sistema não busca perfeição; busca presença suficiente para você se enxergar.
+      </p>
+    </section>
+
+    <section class="quick-grid">
+      <article class="quick-card">
         <h3>Fala livre</h3>
-        <p>
-          Fale sobre qualquer tema e observe presença, clareza, ritmo e continuidade.
-        </p>
-        <a class="btn" href="fala-livre.html">Entrar</a>
+        <p>Uma forma simples de começar a se observar.</p>
+        <a class="btn-secondary" href="fala-livre.html">Abrir</a>
       </article>
 
-      <article class="card">
-        <h3>Treino de apresentação</h3>
-        <p>
-          Organize uma ideia como se estivesse diante de uma plateia, banca ou equipe.
-        </p>
-        <a class="btn secondary" href="apresentacao.html">Entrar</a>
-      </article>
-
-      <article class="card">
-        <h3>Simulação de aula</h3>
-        <p>
-          Explique um tema como se estivesse ensinando alguém pela primeira vez.
-        </p>
-        <a class="btn secondary" href="aula.html">Entrar</a>
-      </article>
-
-      <article class="card">
-        <h3>Simulação de diálogo</h3>
-        <p>
-          Responda perguntas e organize pensamento em forma de conversa guiada.
-        </p>
-        <a class="btn secondary" href="dialogo.html">Entrar</a>
-      </article>
-
-      <article class="card">
-        <h3>Análise de áudio</h3>
-        <p>
-          Carregue um áudio já gravado e observe sua expressão por outra perspectiva.
-        </p>
-        <a class="btn secondary" href="audio.html">Entrar</a>
-      </article>
-
-      <article class="card highlight">
-        <h3>Seu progresso</h3>
-        <p>
-          Veja histórico, fases e recomendações do seu processo de evolução.
-        </p>
-        <a class="btn secondary" href="progresso.html">Ver progresso</a>
+      <article class="quick-card">
+        <h3>Conectar Elayon PC</h3>
+        <p>Será liberado com mais firmeza na jornada.</p>
+        <button class="btn-secondary" id="btnConectarPC" type="button">Conectar</button>
       </article>
     </section>
 
-    <section class="section">
-      <h2>Sequência sugerida</h2>
-      <div class="flow">
-        <div class="flow-step">Fala livre</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Apresentação</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Aula</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Diálogo</div>
-        <div class="flow-arrow">→</div>
-        <div class="flow-step">Áudio</div>
-      </div>
-    </section>
-
-    <section class="cards-grid two-col">
-      <article class="card">
-        <h3>Leitura atual</h3>
-        <p id="painelLeituraAtual">
-          Você já está apto para continuar o processo. O próximo avanço depende de repetição consciente.
-        </p>
-      </article>
-
-      <article class="card">
-        <h3>Direção sugerida</h3>
-        <p id="painelDirecao">
-          Continue pelo modo de apresentação para fortalecer encadeamento e firmeza.
-        </p>
-      </article>
-    </section>
-
-    <section class="section">
-      <div class="btn-row">
-        <a class="btn secondary" href="index.html">Página inicial</a>
-        <button class="btn secondary" id="btnResetLocal" type="button">Resetar progresso local</button>
-      </div>
-    </section>
-
+    <div class="footer-note">Presença. Consciência. Automação ética.</div>
   </main>
 
-  <footer class="footer">
-    <p>Presença • o painel organiza o caminho, mas quem evolui é você</p>
-  </footer>
-
-  <script src="app.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
