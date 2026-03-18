@@ -12,22 +12,24 @@
     }
   }
 
+  function getModeKeyFromPage() {
+    const page = document.body.dataset.page || "";
+    if (ELAYON_CONFIG.modes[page]) return page;
+    return "fala-livre";
+  }
+
   function hydrateUser() {
     const auth = JSON.parse(localStorage.getItem("elayon_auth") || "null");
-    const progress = window.ELAYON_ENGINE ? window.ELAYON_ENGINE.getProgress() : { fase: "Inato", sessoes: 0, ultimoScore: 0 };
+    const progress = window.ELAYON_ENGINE
+      ? window.ELAYON_ENGINE.getProgress()
+      : { fase: "Inato", sessoes: 0, ultimoScore: 0, direcao: "" };
 
     if (auth?.login) setText("painelLogin", `Operador: ${auth.login}`);
+
     setText("faseAtualPainel", progress.fase || "Inato");
     setText("totalSessoesPainel", String(progress.sessoes || 0));
     setText("ultimoScorePainel", String(progress.ultimoScore || 0));
-
-    if (progress.fase === "Inato") {
-      setText("direcaoPainel", "Continue praticando para consolidar presença e constância.");
-    } else if (progress.fase === "Treinamento") {
-      setText("direcaoPainel", "Você já pode aprofundar firmeza, clareza e direção.");
-    } else {
-      setText("direcaoPainel", "Você atingiu prontidão para avançar à conexão operacional.");
-    }
+    setText("direcaoPainel", progress.direcao || "Continue praticando com calma e constância.");
   }
 
   function bindCRSControls() {
@@ -68,13 +70,14 @@
         window.ELAYON_CRS.stop();
 
         const snapshot = window.ELAYON_CRS.snapshot();
-        const result = window.ELAYON_ENGINE.commitSession(snapshot);
+        const modeKey = getModeKeyFromPage();
+        const result = window.ELAYON_ENGINE.commitSession(snapshot, modeKey);
 
         setText("faseAtualPainel", result.fase);
 
         const progress = window.ELAYON_ENGINE.getProgress();
         setText("totalSessoesPainel", String(progress.sessoes));
-        setText("painelMensagem", result.leitura);
+        setText("painelMensagem", result.leituraBase);
         setText("crsStatus", "finalizado");
 
         if (btnConectarPC && result.fase === "Apto") {
@@ -82,13 +85,8 @@
           btnConectarPC.classList.add("btn-primary");
         }
 
-        localStorage.setItem("elayon_last_result", JSON.stringify({
-          snapshot,
-          result
-        }));
-
-        if (document.body.dataset.page === "fala-livre") {
-          window.location.href = "resultado.html";
+        if (document.body.dataset.page !== "painel") {
+          window.location.href = ELAYON_CONFIG.routes.resultPage;
         }
       });
     }
@@ -107,28 +105,18 @@
 
   function fillResultado() {
     const last = getLastResult();
-    if (!last) return;
+    if (!window.ELAYON_READER) return;
 
-    const { snapshot, result } = last;
-    const avg = snapshot.average;
-    const strongest = Object.entries(avg).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k]) => k);
-    const weakest = Object.entries(avg).sort((a, b) => a[1] - b[1]).slice(0, 2).map(([k]) => k);
+    const reading = window.ELAYON_READER.buildReading(last);
 
-    setText("resultadoMomentos", `Sua sessão mostrou média consistente em ${strongest.join(" e ")}, com espaço de crescimento em ${weakest.join(" e ")}.`);
-    setText("resultadoFortes", `Os pontos mais fortes desta interação foram ${strongest.join(" e ")}.`);
-    setText("resultadoMelhorias", `Vale observar melhor ${weakest.join(" e ")} nas próximas sessões.`);
-    setText("resultadoEmocional", result.leitura);
-    setText("resultadoNivel", result.fase);
-    setText("resultadoScore", String(result.score));
-    setText("resultadoFase", result.fase);
-
-    if (result.fase === "Inato") {
-      setText("resultadoProximo", "Repita a sessão com mais constância. O objetivo agora é fortalecer presença.");
-    } else if (result.fase === "Treinamento") {
-      setText("resultadoProximo", "Você já entrou em treinamento. Continue praticando para ganhar firmeza e clareza.");
-    } else {
-      setText("resultadoProximo", "Você atingiu prontidão para avançar. O próximo passo é a adesão simbólica ao ecossistema.");
-    }
+    setText("resultadoMomentos", reading.momentos);
+    setText("resultadoFortes", reading.fortes);
+    setText("resultadoMelhorias", reading.melhorias);
+    setText("resultadoEmocional", reading.emocional);
+    setText("resultadoNivel", reading.nivel);
+    setText("resultadoScore", String(reading.score));
+    setText("resultadoFase", reading.fase);
+    setText("resultadoProximo", reading.proximo);
   }
 
   function bindCheckout() {
