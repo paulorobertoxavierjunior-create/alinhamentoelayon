@@ -28,12 +28,15 @@ window.ELAYON_CONFIG = {
     scoreTraining: 55,
     scoreApto: 72,
     highSilenceFrames: 120,
+    veryHighSilenceFrames: 220,
     lowClarity: 45,
     lowStability: 45,
     lowContinuity: 45,
+    lowFirmness: 45,
     goodPresence: 65,
     goodFirmness: 65,
-    goodRhythm: 60
+    goodRhythm: 60,
+    excellentRange: 82
   },
 
   modes: {
