@@ -10,28 +10,75 @@
 
   <main class="entry-shell">
     <section class="entry-card">
+
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
 
       <div class="entry-badge">Conexão consciente</div>
 
-      <h1 class="entry-title">Bem-vindo</h1>
+      <h1 class="entry-title">Bem-vindo ao Elayon</h1>
+
       <p class="entry-subtitle">
-        Entre no Elayon com calma. Uma boa presença melhora a relação entre você, a máquina e o seu trabalho.
+        Entre com calma. Aqui, a tecnologia acompanha a sua intenção,
+        organiza a interação e prepara o caminho para uma experiência
+        mais clara, ética e funcional.
       </p>
 
-      <form id="loginForm" class="entry-form">
-        <label for="login">Login</label>
-        <input id="login" name="login" type="text" placeholder="Seu login" required>
+      <form id="loginForm" class="entry-form" novalidate>
+        <label for="login">E-mail ou login</label>
+        <input
+          id="login"
+          name="login"
+          type="text"
+          placeholder="Seu e-mail ou login"
+          autocomplete="username"
+          required
+        >
 
         <label for="senha">Senha</label>
-        <input id="senha" name="senha" type="text" placeholder="Senha visível para apresentação" required>
+        <div class="password-wrap">
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            placeholder="Digite sua senha"
+            autocomplete="current-password"
+            required
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            id="togglePassword"
+            aria-label="Mostrar ou ocultar senha"
+          >
+            👁
+          </button>
+        </div>
 
-        <button class="btn-primary" type="submit">Conectar Elayon PC</button>
+        <button class="btn-primary" id="submitButton" type="submit">
+          Entrar no sistema
+        </button>
+
+        <div id="formMessage" class="form-message" aria-live="polite"></div>
       </form>
 
+      <div class="entry-actions">
+        <a href="cadastro.html" class="btn-secondary">Criar acesso</a>
+        <a href="recuperar.html" class="btn-secondary">Recuperar senha</a>
+      </div>
+
+      <div class="entry-links">
+        <a href="apresentacao.html">Conhecer o projeto</a>
+      </div>
+
       <p class="entry-note">
-        Presença primeiro. Automação depois.
+        Presença primeiro. Estrutura depois. Automação com consciência.
       </p>
+
+      <p class="entry-security">
+        O acesso é individual. O processamento sensível ocorre em ambiente
+        separado e protegido, conectado ao sistema somente quando necessário.
+      </p>
+
     </section>
   </main>
 
