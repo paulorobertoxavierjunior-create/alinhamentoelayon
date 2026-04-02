@@ -30,8 +30,8 @@
     localStorage.removeItem(key);
   }
 
-  function setMessage(message, type = "default") {
-    const box = document.getElementById("formMessage");
+  function setMessage(targetId, message, type = "default") {
+    const box = document.getElementById(targetId);
     if (!box) return;
 
     box.textContent = message || "";
@@ -41,19 +41,15 @@
     if (type === "success") box.classList.add("success");
   }
 
-  function setLoading(isLoading) {
-    const submitButton = document.getElementById("submitButton");
-    if (!submitButton) return;
+  function setButtonLoading(buttonId, isLoading, defaultText, loadingText) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
 
-    submitButton.disabled = isLoading;
-    submitButton.textContent = isLoading ? "Entrando..." : "Entrar no sistema";
+    button.disabled = isLoading;
+    button.textContent = isLoading ? loadingText : defaultText;
   }
 
-  function normalizeLogin(value) {
-    return String(value || "").trim();
-  }
-
-  function normalizePassword(value) {
+  function normalize(value) {
     return String(value || "").trim();
   }
 
@@ -67,49 +63,101 @@
     return !!url && !url.includes("COLE_AQUI") && !!anonKey && !anonKey.includes("COLE_AQUI");
   }
 
-  async function trySupabaseLogin(login, senha) {
-    if (!isSupabaseEnabled() || !hasSupabaseCredentials()) {
-      return {
-        ok: false,
-        reason: "supabase_not_ready"
-      };
+  function getSupabaseClient() {
+    if (!window.supabase || !window.supabase.createClient) return null;
+
+    const url = getConfig("supabase.url", "");
+    const anonKey = getConfig("supabase.anonKey", "");
+
+    if (!url || !anonKey || url.includes("COLE_AQUI") || anonKey.includes("COLE_AQUI")) {
+      return null;
     }
 
-    if (!window.supabase || !window.supabase.createClient) {
-      return {
-        ok: false,
-        reason: "supabase_lib_missing"
-      };
+    return window.supabase.createClient(url, anonKey);
+  }
+
+  async function trySupabaseLogin(login, senha) {
+    if (!isSupabaseEnabled()) {
+      return { ok: false, reason: "supabase_disabled" };
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      return { ok: false, reason: "supabase_not_ready" };
     }
 
     try {
-      const supabaseUrl = getConfig("supabase.url");
-      const supabaseAnonKey = getConfig("supabase.anonKey");
-      const client = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+      const payload = login.includes("@")
+        ? { email: login, password: senha }
+        : { email: login, password: senha };
 
-      const { data, error } = await client.auth.signInWithPassword({
-        email: login,
-        password: senha
+      const { data, error } = await client.auth.signInWithPassword(payload);
+
+      if (error) {
+        return { ok: false, reason: "auth_error", error };
+      }
+
+      return { ok: true, data };
+    } catch (error) {
+      return { ok: false, reason: "auth_exception", error };
+    }
+  }
+
+  async function trySupabaseSignup(nome, email, senha) {
+    if (!isSupabaseEnabled()) {
+      return { ok: false, reason: "supabase_disabled" };
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      return { ok: false, reason: "supabase_not_ready" };
+    }
+
+    try {
+      const { data, error } = await client.auth.signUp({
+        email,
+        password: senha,
+        options: {
+          data: {
+            nome
+          }
+        }
       });
 
       if (error) {
-        return {
-          ok: false,
-          reason: "auth_error",
-          error
-        };
+        return { ok: false, reason: "signup_error", error };
       }
 
-      return {
-        ok: true,
-        data
-      };
+      return { ok: true, data };
     } catch (error) {
-      return {
-        ok: false,
-        reason: "auth_exception",
-        error
-      };
+      return { ok: false, reason: "signup_exception", error };
+    }
+  }
+
+  async function trySupabaseRecovery(email) {
+    if (!isSupabaseEnabled()) {
+      return { ok: false, reason: "supabase_disabled" };
+    }
+
+    const client = getSupabaseClient();
+    if (!client) {
+      return { ok: false, reason: "supabase_not_ready" };
+    }
+
+    try {
+      const redirectTo = window.location.origin + "/" + getConfig("routes.entryPage", "index.html");
+
+      const { data, error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo
+      });
+
+      if (error) {
+        return { ok: false, reason: "recovery_error", error };
+      }
+
+      return { ok: true, data };
+    } catch (error) {
+      return { ok: false, reason: "recovery_exception", error };
     }
   }
 
@@ -133,73 +181,181 @@
   async function handleLoginSubmit(event) {
     event.preventDefault();
 
-    const loginInput = document.getElementById("login");
-    const senhaInput = document.getElementById("senha");
-
-    const login = normalizeLogin(loginInput?.value);
-    const senha = normalizePassword(senhaInput?.value);
+    const login = normalize(document.getElementById("login")?.value);
+    const senha = normalize(document.getElementById("senha")?.value);
 
     if (!login || !senha) {
-      setMessage("Preencha login e senha para continuar.", "error");
+      setMessage("formMessage", "Preencha login e senha para continuar.", "error");
       return;
     }
 
-    setMessage("");
-    setLoading(true);
+    setMessage("formMessage", "");
+    setButtonLoading("submitButton", true, "Entrar no sistema", "Entrando...");
 
-    const supabaseResult = await trySupabaseLogin(login, senha);
+    const result = await trySupabaseLogin(login, senha);
 
-    if (supabaseResult.ok) {
+    if (result.ok) {
       persistAuthSession(login, "supabase");
-      setMessage("Acesso confirmado. Entrando no sistema...", "success");
-      setTimeout(goAfterLogin, 450);
+      setMessage("formMessage", "Acesso confirmado. Entrando no sistema...", "success");
+      setTimeout(goAfterLogin, 500);
       return;
     }
 
-    const reason = supabaseResult.reason;
-
-    // Fallback controlado enquanto o Supabase ainda não estiver configurado
-    if (reason === "supabase_not_ready" || reason === "supabase_lib_missing") {
+    if (result.reason === "supabase_disabled" || result.reason === "supabase_not_ready") {
       persistAuthSession(login, "local-fallback");
-      setMessage("Ambiente de autenticação ainda em configuração. Entrada liberada em modo controlado.", "success");
-      setTimeout(goAfterLogin, 550);
+      setMessage(
+        "formMessage",
+        "Autenticação real ainda em configuração. Entrada liberada em modo controlado.",
+        "success"
+      );
+      setTimeout(goAfterLogin, 700);
       return;
     }
 
-    if (reason === "auth_error") {
-      const msg = supabaseResult.error?.message || "Não foi possível autenticar.";
-      setMessage(`Falha no acesso: ${msg}`, "error");
-      setLoading(false);
+    if (result.reason === "auth_error") {
+      const msg = result.error?.message || "Não foi possível autenticar.";
+      setMessage("formMessage", `Falha no acesso: ${msg}`, "error");
+      setButtonLoading("submitButton", false, "Entrar no sistema", "Entrando...");
       return;
     }
 
-    if (reason === "auth_exception") {
-      setMessage("Erro inesperado ao conectar com a autenticação. Tente novamente.", "error");
-      setLoading(false);
+    setMessage("formMessage", "Erro inesperado ao tentar entrar.", "error");
+    setButtonLoading("submitButton", false, "Entrar no sistema", "Entrando...");
+  }
+
+  async function handleSignupSubmit(event) {
+    event.preventDefault();
+
+    const nome = normalize(document.getElementById("signupName")?.value);
+    const email = normalize(document.getElementById("signupEmail")?.value);
+    const senha = normalize(document.getElementById("signupPassword")?.value);
+    const confirmar = normalize(document.getElementById("signupPasswordConfirm")?.value);
+
+    if (!nome || !email || !senha || !confirmar) {
+      setMessage("signupMessage", "Preencha todos os campos do cadastro.", "error");
       return;
     }
 
-    setMessage("Não foi possível concluir o acesso.", "error");
-    setLoading(false);
+    if (senha.length < 6) {
+      setMessage("signupMessage", "A senha precisa ter pelo menos 6 caracteres.", "error");
+      return;
+    }
+
+    if (senha !== confirmar) {
+      setMessage("signupMessage", "As senhas não coincidem.", "error");
+      return;
+    }
+
+    setMessage("signupMessage", "");
+    setButtonLoading("signupButton", true, "Criar acesso", "Criando acesso...");
+
+    const result = await trySupabaseSignup(nome, email, senha);
+
+    if (result.ok) {
+      setMessage(
+        "signupMessage",
+        "Cadastro realizado com sucesso. Verifique seu e-mail para confirmar o acesso, se necessário.",
+        "success"
+      );
+      setButtonLoading("signupButton", false, "Criar acesso", "Criando acesso...");
+      return;
+    }
+
+    if (result.reason === "supabase_disabled" || result.reason === "supabase_not_ready") {
+      setMessage(
+        "signupMessage",
+        "Cadastro real ainda em configuração. Estrutura pronta para ativação com Supabase.",
+        "success"
+      );
+      setButtonLoading("signupButton", false, "Criar acesso", "Criando acesso...");
+      return;
+    }
+
+    if (result.reason === "signup_error") {
+      const msg = result.error?.message || "Não foi possível criar o acesso.";
+      setMessage("signupMessage", `Falha no cadastro: ${msg}`, "error");
+      setButtonLoading("signupButton", false, "Criar acesso", "Criando acesso...");
+      return;
+    }
+
+    setMessage("signupMessage", "Erro inesperado ao criar acesso.", "error");
+    setButtonLoading("signupButton", false, "Criar acesso", "Criando acesso...");
+  }
+
+  async function handleRecoverySubmit(event) {
+    event.preventDefault();
+
+    const email = normalize(document.getElementById("recoveryEmail")?.value);
+
+    if (!email) {
+      setMessage("recoveryMessage", "Informe seu e-mail para continuar.", "error");
+      return;
+    }
+
+    setMessage("recoveryMessage", "");
+    setButtonLoading("recoveryButton", true, "Enviar recuperação", "Enviando...");
+
+    const result = await trySupabaseRecovery(email);
+
+    if (result.ok) {
+      setMessage(
+        "recoveryMessage",
+        "Se o e-mail estiver cadastrado, o fluxo de recuperação foi iniciado.",
+        "success"
+      );
+      setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
+      return;
+    }
+
+    if (result.reason === "supabase_disabled" || result.reason === "supabase_not_ready") {
+      setMessage(
+        "recoveryMessage",
+        "Recuperação real ainda em configuração. Fluxo preparado para Supabase.",
+        "success"
+      );
+      setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
+      return;
+    }
+
+    if (result.reason === "recovery_error") {
+      const msg = result.error?.message || "Não foi possível iniciar a recuperação.";
+      setMessage("recoveryMessage", `Falha na recuperação: ${msg}`, "error");
+      setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
+      return;
+    }
+
+    setMessage("recoveryMessage", "Erro inesperado ao recuperar senha.", "error");
+    setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
+  }
+
+  function bindPasswordToggle(buttonId, inputId) {
+    const button = document.getElementById(buttonId);
+    const input = document.getElementById(inputId);
+
+    if (!button || !input) return;
+
+    button.addEventListener("click", function () {
+      const isHidden = input.type === "password";
+      input.type = isHidden ? "text" : "password";
+    });
   }
 
   function bindLogin() {
     const form = document.getElementById("loginForm");
     if (!form) return;
-
     form.addEventListener("submit", handleLoginSubmit);
   }
 
-  function bindPasswordToggle() {
-    const passwordInput = document.getElementById("senha");
-    const togglePassword = document.getElementById("togglePassword");
+  function bindSignup() {
+    const form = document.getElementById("signupForm");
+    if (!form) return;
+    form.addEventListener("submit", handleSignupSubmit);
+  }
 
-    if (!passwordInput || !togglePassword) return;
-
-    togglePassword.addEventListener("click", function () {
-      const hidden = passwordInput.type === "password";
-      passwordInput.type = hidden ? "text" : "password";
-    });
+  function bindRecovery() {
+    const form = document.getElementById("recoveryForm");
+    if (!form) return;
+    form.addEventListener("submit", handleRecoverySubmit);
   }
 
   function fillConnectionPage() {
@@ -249,8 +405,15 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     protectPrivatePages();
-    bindPasswordToggle();
+
+    bindPasswordToggle("togglePassword", "senha");
+    bindPasswordToggle("toggleSignupPassword", "signupPassword");
+    bindPasswordToggle("toggleSignupPasswordConfirm", "signupPasswordConfirm");
+
     bindLogin();
+    bindSignup();
+    bindRecovery();
+
     fillConnectionPage();
     bindEnterApp();
     bindLogoutButtons();
