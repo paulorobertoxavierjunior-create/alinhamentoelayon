@@ -23,8 +23,8 @@ window.ELAYON_CONFIG = {
   },
 
   supabase: {
-    url: "COLE_AQUI_SUPABASE_URL",
-    anonKey: "COLE_AQUI_SUPABASE_ANON_KEY"
+    url: "https://eudcjihffrfmhzmfwtlg.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0"
   },
 
   crs: {
