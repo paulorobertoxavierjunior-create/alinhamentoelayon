@@ -1,9 +1,39 @@
 window.ELAYON_CONFIG = {
   appName: "Elayon",
 
+  app: {
+    environment: "production",
+    useSupabaseAuth: true,
+    useCloudCRS: true,
+    saveLocalProgress: true,
+    maxLocalSessions: 10
+  },
+
   routes: {
-    nextPageAfterConnection: "painel.html",
-    resultPage: "resultado.html"
+    entryPage: "index.html",
+    signupPage: "cadastro.html",
+    recoveryPage: "recuperar.html",
+    connectionPage: "conexao.html",
+    panelPage: "painel.html",
+    audioPage: "audio.html",
+    resultPage: "resultado.html",
+    presentationPage: "apresentacao.html",
+    checkoutPage: "checkout.html",
+    nextPageAfterConnection: "painel.html"
+  },
+
+  supabase: {
+    url: "COLE_AQUI_SUPABASE_URL",
+    anonKey: "COLE_AQUI_SUPABASE_ANON_KEY"
+  },
+
+  crs: {
+    baseUrl: "COLE_AQUI_URL_DO_CRS_CLOUD",
+    endpoints: {
+      health: "/health",
+      analyze: "/analyze",
+      config: "/config"
+    }
   },
 
   phases: {
@@ -60,5 +90,13 @@ window.ELAYON_CONFIG = {
       label: "Análise de áudio",
       emphasis: "revisão"
     }
+  },
+
+  storageKeys: {
+    auth: "elayon_auth",
+    progress: "elayon_progress",
+    lastResult: "elayon_last_result",
+    lastCRSResponse: "elayon_last_crs_response",
+    lastCRSPayload: "elayon_last_crs_payload"
   }
 };
