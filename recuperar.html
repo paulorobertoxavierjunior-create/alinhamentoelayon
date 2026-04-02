@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon • Recuperar senha</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="recuperar">
+
+  <main class="entry-shell">
+    <section class="entry-card">
+
+      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
+
+      <div class="entry-badge">Recuperação de acesso</div>
+
+      <h1 class="entry-title">Recuperar senha</h1>
+
+      <p class="entry-subtitle">
+        Informe seu e-mail para iniciar o processo de recuperação de acesso
+        com segurança e continuidade.
+      </p>
+
+      <form id="recoveryForm" class="entry-form" novalidate>
+        <label for="recoveryEmail">E-mail</label>
+        <input
+          id="recoveryEmail"
+          name="recoveryEmail"
+          type="email"
+          placeholder="seuemail@exemplo.com"
+          autocomplete="email"
+          required
+        >
+
+        <button class="btn-primary" id="recoveryButton" type="submit">
+          Enviar recuperação
+        </button>
+
+        <div id="recoveryMessage" class="form-message" aria-live="polite"></div>
+      </form>
+
+      <div class="entry-actions">
+        <a href="index.html" class="btn-secondary">Voltar ao login</a>
+        <a href="cadastro.html" class="btn-secondary">Criar acesso</a>
+      </div>
+
+      <p class="entry-note">
+        Quando a autenticação real estiver conectada, esta ação enviará o fluxo de recuperação
+        para o seu e-mail cadastrado.
+      </p>
+
+      <p class="entry-security">
+        A recuperação de senha pertence à camada de autenticação. O CRS permanece isolado
+        e não depende da sua senha para processar a análise.
+      </p>
+
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
