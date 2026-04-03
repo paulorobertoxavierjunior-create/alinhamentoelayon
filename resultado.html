@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Resultado</title>
+  <meta name="description" content="Leitura consolidada da sessão no Elayon, com síntese de sinais, direção sugerida e próximos passos.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="resultado">
@@ -13,48 +14,16 @@
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
       <div>
         <div class="topbar-title">Leitura da sessão</div>
-        <div class="topbar-sub">Resultado construtivo do seu processo</div>
+        <div class="topbar-sub">Síntese de presença, ritmo e direção</div>
       </div>
     </section>
 
     <section class="hero-box">
-      <h1>Você se mostrou no processo</h1>
+      <h1>Resultado da sua interação</h1>
       <p>
-        O sistema organizou os sinais da sua fala para devolver uma leitura simples,
-        útil e orientadora do momento.
+        Esta leitura organiza os sinais captados durante a sessão e apresenta um retrato
+        inicial do seu momento de uso, com foco em clareza, continuidade e prontidão.
       </p>
-    </section>
-
-    <section class="quick-grid">
-      <article class="quick-card">
-        <h3>Momento observado</h3>
-        <p id="resultadoMomentos">
-          Sua sessão mostrou sinais iniciais de presença e organização progressiva da expressão.
-        </p>
-      </article>
-
-      <article class="quick-card">
-        <h3>Leitura do momento</h3>
-        <p id="resultadoEmocional">
-          Momento de observação inicial, com espaço real para fortalecimento.
-        </p>
-      </article>
-    </section>
-
-    <section class="quick-grid">
-      <article class="quick-card">
-        <h3>Pontos fortes</h3>
-        <p id="resultadoFortes">
-          Clareza de intenção, disposição para se expressar e continuidade no processo.
-        </p>
-      </article>
-
-      <article class="quick-card">
-        <h3>Pontos de melhoria</h3>
-        <p id="resultadoMelhorias">
-          Vale observar melhor pausas longas, firmeza da conclusão e estabilidade do ritmo.
-        </p>
-      </article>
     </section>
 
     <section class="panel-box">
@@ -64,26 +33,57 @@
         <div class="status-pill">Fase: <span id="resultadoFase">Inato</span></div>
       </div>
 
+      <div class="quick-grid">
+        <article class="quick-card">
+          <h3>Momentos percebidos</h3>
+          <p id="resultadoMomentos">
+            Ainda não há uma sessão registrada para leitura.
+          </p>
+        </article>
+
+        <article class="quick-card">
+          <h3>Pontos fortes</h3>
+          <p id="resultadoFortes">
+            Sem dados suficientes.
+          </p>
+        </article>
+
+        <article class="quick-card">
+          <h3>Pontos de melhoria</h3>
+          <p id="resultadoMelhorias">
+            Sem dados suficientes.
+          </p>
+        </article>
+
+        <article class="quick-card">
+          <h3>Leitura do momento</h3>
+          <p id="resultadoEmocional">
+            Sem leitura disponível.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="message-box">
       <p id="resultadoProximo">
-        Continue praticando. O próximo passo é repetir a sessão com mais presença e clareza.
+        Realize uma sessão para iniciar a leitura e receber uma direção sugerida.
       </p>
     </section>
 
     <section class="cta-row">
-      <a class="btn-secondary" href="fala-livre.html">Praticar de novo</a>
-      <a class="btn-secondary" href="progresso.html">Ver progresso</a>
-      <a class="btn-primary" href="checkout.html">Avançar</a>
+      <a href="painel.html" class="btn-secondary">Voltar ao painel</a>
+      <a href="fala-livre.html" class="btn-primary">Nova sessão</a>
+      <a href="progresso.html" class="btn-secondary">Ver progresso</a>
     </section>
 
-    <div class="footer-note">Ver-se com clareza já é uma forma de avanço.</div>
+    <div class="footer-note">
+      Ler com calma também faz parte do processo.
+    </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
-<script src="js/crs.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/reader.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/app.js"></script>
-
+  <script src="js/app.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>
