@@ -4,18 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Entrada</title>
+  <meta name="description" content="Acesso ao ambiente Elayon com autenticação segura, presença consciente e continuidade operacional.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="index">
 
   <main class="entry-shell">
-    <section class="entry-card">
+    <section class="entry-card" aria-labelledby="entryTitle">
 
-      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
+      <img
+        src="IMG-20260218-WA0015.jpg"
+        alt="Logo Elayon"
+        class="entry-logo"
+      >
 
       <div class="entry-badge">Conexão consciente</div>
 
-      <h1 class="entry-title">Bem-vindo ao Elayon</h1>
+      <h1 class="entry-title" id="entryTitle">Bem-vindo ao Elayon</h1>
 
       <p class="entry-subtitle">
         Entre com calma. Aqui, a tecnologia acompanha a sua intenção,
@@ -24,13 +29,14 @@
       </p>
 
       <form id="loginForm" class="entry-form" novalidate>
-        <label for="login">E-mail ou login</label>
+        <label for="login">E-mail</label>
         <input
           id="login"
           name="login"
-          type="text"
-          placeholder="Seu e-mail ou login"
+          type="email"
+          placeholder="seuemail@exemplo.com"
           autocomplete="username"
+          inputmode="email"
           required
         >
 
@@ -49,6 +55,7 @@
             class="toggle-password"
             id="togglePassword"
             aria-label="Mostrar ou ocultar senha"
+            aria-pressed="false"
           >
             👁
           </button>
