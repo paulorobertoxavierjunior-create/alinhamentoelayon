@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Recuperar senha</title>
+  <meta name="description" content="Recuperação de acesso ao ambiente Elayon.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="recuperar">
 
   <main class="entry-shell">
-    <section class="entry-card">
+    <section class="entry-card" aria-labelledby="recoveryTitle">
 
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
 
       <div class="entry-badge">Recuperação de acesso</div>
 
-      <h1 class="entry-title">Recuperar senha</h1>
+      <h1 class="entry-title" id="recoveryTitle">Recuperar senha</h1>
 
       <p class="entry-subtitle">
-        Informe seu e-mail para iniciar o processo de recuperação de acesso
-        com segurança e continuidade.
+        Informe seu e-mail para iniciar o processo de recuperação de acesso com segurança e continuidade.
       </p>
 
       <form id="recoveryForm" class="entry-form" novalidate>
@@ -30,6 +30,7 @@
           type="email"
           placeholder="seuemail@exemplo.com"
           autocomplete="email"
+          inputmode="email"
           required
         >
 
@@ -45,14 +46,16 @@
         <a href="cadastro.html" class="btn-secondary">Criar acesso</a>
       </div>
 
+      <div class="entry-links">
+        <a href="apresentacao.html">Conhecer o projeto</a>
+      </div>
+
       <p class="entry-note">
-        Quando a autenticação real estiver conectada, esta ação enviará o fluxo de recuperação
-        para o seu e-mail cadastrado.
+        A recuperação pertence à camada de autenticação e não interfere na camada analítica do sistema.
       </p>
 
       <p class="entry-security">
-        A recuperação de senha pertence à camada de autenticação. O CRS permanece isolado
-        e não depende da sua senha para processar a análise.
+        O processamento sensível do CRS permanece separado do fluxo de senha, autenticação e recuperação.
       </p>
 
     </section>
