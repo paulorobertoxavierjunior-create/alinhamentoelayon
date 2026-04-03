@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon • Confirmação</title>
+  <meta name="description" content="Confirmação de cadastro e orientação para acesso ao ambiente Elayon.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="confirmacao">
+
+  <main class="entry-shell">
+    <section class="entry-card" aria-labelledby="confirmacaoTitle">
+
+      <img
+        src="IMG-20260218-WA0015.jpg"
+        alt="Logo Elayon"
+        class="entry-logo"
+      >
+
+      <div class="entry-badge">Cadastro registrado</div>
+
+      <h1 class="entry-title" id="confirmacaoTitle">Acesso criado</h1>
+
+      <p class="entry-subtitle">
+        Seu cadastro foi recebido com sucesso. Agora siga para a etapa de entrada
+        e teste o acesso ao ambiente Elayon.
+      </p>
+
+      <div class="message-box message-box-center">
+        <p>
+          Se o fluxo de autenticação exigir validação adicional, acompanhe as instruções
+          enviadas pelo sistema e retorne ao login em seguida.
+        </p>
+      </div>
+
+      <div class="entry-actions">
+        <a href="index.html" class="btn-primary">Ir para o login</a>
+        <a href="apresentacao.html" class="btn-secondary">Conhecer o projeto</a>
+      </div>
+
+      <p class="entry-note">
+        O acesso é individual. O ambiente de autenticação é separado da camada analítica do CRS.
+      </p>
+
+      <p class="entry-security">
+        Esta página confirma a conclusão da etapa de cadastro no front-end.
+        O próximo teste será a autenticação real com o Supabase.
+      </p>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
