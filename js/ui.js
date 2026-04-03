@@ -4,27 +4,29 @@
     if (el) el.textContent = text;
   }
 
-  function getLastResult() {
+  function getPageModeKey() {
+    const page = document.body.dataset.page || "";
+    if (window.ELAYON_CONFIG?.modes?.[page]) return page;
+    return "fala-livre";
+  }
+
+  function getAuthUser() {
     try {
-      return JSON.parse(localStorage.getItem("elayon_last_result")) || null;
+      return JSON.parse(localStorage.getItem("elayon_auth_user") || "null");
     } catch {
       return null;
     }
   }
 
-  function getModeKeyFromPage() {
-    const page = document.body.dataset.page || "";
-    if (ELAYON_CONFIG.modes[page]) return page;
-    return "fala-livre";
-  }
-
-  function hydrateUser() {
-    const auth = JSON.parse(localStorage.getItem("elayon_auth") || "null");
+  async function hydrateUser() {
+    const localUser = getAuthUser();
     const progress = window.ELAYON_ENGINE
       ? window.ELAYON_ENGINE.getProgress()
       : { fase: "Inato", sessoes: 0, ultimoScore: 0, direcao: "" };
 
-    if (auth?.login) setText("painelLogin", `Operador: ${auth.login}`);
+    if (localUser?.email) {
+      setText("painelLogin", `Operador: ${localUser.email}`);
+    }
 
     setText("faseAtualPainel", progress.fase || "Inato");
     setText("totalSessoesPainel", String(progress.sessoes || 0));
@@ -32,7 +34,7 @@
     setText("direcaoPainel", progress.direcao || "Continue praticando com calma e constância.");
   }
 
-  function bindCRSControls() {
+  async function bindCRSControls() {
     const btnStart = document.getElementById("btnStartCRS");
     const btnPause = document.getElementById("btnPauseCRS");
     const btnRestart = document.getElementById("btnRestartCRS");
@@ -41,6 +43,7 @@
 
     if (btnStart) {
       btnStart.addEventListener("click", async () => {
+        if (!window.ELAYON_CRS) return;
         await window.ELAYON_CRS.start();
         setText("crsStatus", "captando");
         setText("painelMensagem", "Captação iniciada. Fale com naturalidade e observe a média da sua presença.");
@@ -49,6 +52,7 @@
 
     if (btnPause) {
       btnPause.addEventListener("click", () => {
+        if (!window.ELAYON_CRS) return;
         window.ELAYON_CRS.stop();
         setText("crsStatus", "pausado");
         setText("painelMensagem", "Pausa feita. Respire, reorganize a ideia e continue quando quiser.");
@@ -57,6 +61,7 @@
 
     if (btnRestart) {
       btnRestart.addEventListener("click", () => {
+        if (!window.ELAYON_CRS) return;
         window.ELAYON_CRS.stop();
         window.ELAYON_CRS.reset();
         window.ELAYON_CRS.render();
@@ -66,18 +71,20 @@
     }
 
     if (btnStop) {
-      btnStop.addEventListener("click", () => {
+      btnStop.addEventListener("click", async () => {
+        if (!window.ELAYON_CRS || !window.ELAYON_ENGINE) return;
+
         window.ELAYON_CRS.stop();
 
         const snapshot = window.ELAYON_CRS.snapshot();
-        const modeKey = getModeKeyFromPage();
-        const result = window.ELAYON_ENGINE.commitSession(snapshot, modeKey);
+        const modeKey = getPageModeKey();
+        const result = await window.ELAYON_ENGINE.commitSession(snapshot, modeKey);
 
-        setText("faseAtualPainel", result.fase);
+        setText("faseAtualPainel", result.fase || "Inato");
 
         const progress = window.ELAYON_ENGINE.getProgress();
-        setText("totalSessoesPainel", String(progress.sessoes));
-        setText("painelMensagem", result.leituraBase);
+        setText("totalSessoesPainel", String(progress.sessoes || 0));
+        setText("painelMensagem", result.leituraBase || "Sessão registrada.");
         setText("crsStatus", "finalizado");
 
         if (btnConectarPC && result.fase === "Apto") {
@@ -86,15 +93,16 @@
         }
 
         if (document.body.dataset.page !== "painel") {
-          window.location.href = ELAYON_CONFIG.routes.resultPage;
+          const next = window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
+          window.location.href = next;
         }
       });
     }
 
     if (btnConectarPC) {
       btnConectarPC.addEventListener("click", () => {
-        const progress = window.ELAYON_ENGINE.getProgress();
-        if (progress.fase !== "Apto") {
+        const progress = window.ELAYON_ENGINE?.getProgress?.();
+        if (!progress || progress.fase !== "Apto") {
           alert("Continue praticando. A conexão com o Elayon PC será liberada quando você atingir a fase Apto.");
           return;
         }
@@ -104,8 +112,12 @@
   }
 
   function fillResultado() {
-    const last = getLastResult();
     if (!window.ELAYON_READER) return;
+
+    let last = null;
+    try {
+      last = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
+    } catch {}
 
     const reading = window.ELAYON_READER.buildReading(last);
 
@@ -128,9 +140,9 @@
     });
   }
 
-  document.addEventListener("DOMContentLoaded", () => {
-    hydrateUser();
-    bindCRSControls();
+  document.addEventListener("DOMContentLoaded", async () => {
+    await hydrateUser();
+    await bindCRSControls();
     fillResultado();
     bindCheckout();
   });
