@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Painel</title>
+  <meta name="description" content="Painel central do usuário no Elayon.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="painel">
@@ -20,7 +21,8 @@
     <section class="hero-box">
       <h1>Faça-se presente</h1>
       <p>
-        Fale, observe e ajuste. O sistema acompanha sua interação para ajudar você a ganhar clareza antes da automação.
+        Fale, observe e ajuste. O sistema acompanha sua interação para ajudar você a ganhar
+        clareza antes da automação.
       </p>
     </section>
 
@@ -28,78 +30,66 @@
       <div class="status-row">
         <div class="status-pill">Fase: <span id="faseAtualPainel">Inato</span></div>
         <div class="status-pill">Sessões: <span id="totalSessoesPainel">0</span></div>
-        <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
+        <div class="status-pill">Último score: <span id="ultimoScorePainel">0</span></div>
       </div>
 
-      <div class="meter-grid">
-        <div class="meter-card">
-          <span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div>
-        </div>
+      <div class="message-box" style="margin:0;">
+        <p id="direcaoPainel">Continue praticando com calma e constância.</p>
       </div>
-    </section>
-
-    <section class="cta-row">
-      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
-      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
-      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
-      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
-    </section>
-
-    <section class="message-box">
-      <p id="painelMensagem">
-        Comece com calma. A fala nutre as barras. O sistema não busca perfeição; busca presença suficiente para você se enxergar.
-      </p>
     </section>
 
     <section class="quick-grid">
       <article class="quick-card">
         <h3>Fala livre</h3>
-        <p>Uma forma simples de começar a se observar.</p>
+        <p>Comece a observação por uma sessão simples e natural.</p>
         <a class="btn-secondary" href="fala-livre.html">Abrir</a>
       </article>
 
       <article class="quick-card">
-        <h3>Conectar Elayon PC</h3>
-        <p>Será liberado com mais firmeza na jornada.</p>
-        <button class="btn-secondary" id="btnConectarPC" type="button">Conectar</button>
+        <h3>Diálogo</h3>
+        <p>Observe ritmo, resposta e organização em interação simulada.</p>
+        <a class="btn-secondary" href="dialogo.html">Abrir</a>
       </article>
+
+      <article class="quick-card">
+        <h3>Aula</h3>
+        <p>Treine explicação, sequência e clareza na condução de um tema.</p>
+        <a class="btn-secondary" href="aula.html">Abrir</a>
+      </article>
+
+      <article class="quick-card">
+        <h3>Áudio</h3>
+        <p>Use o ambiente para escuta de fala gravada e leitura complementar.</p>
+        <a class="btn-secondary" href="audio.html">Abrir</a>
+      </article>
+
+      <article class="quick-card">
+        <h3>Resultado</h3>
+        <p>Veja a última leitura consolidada da sua sessão.</p>
+        <a class="btn-secondary" href="resultado.html">Abrir</a>
+      </article>
+
+      <article class="quick-card">
+        <h3>Progresso</h3>
+        <p>Acompanhe fase, score e direção sugerida pelo sistema.</p>
+        <a class="btn-secondary" href="progresso.html">Abrir</a>
+      </article>
+    </section>
+
+    <section class="cta-row">
+      <a class="btn-secondary" href="alinhamento.html">Alinhamento</a>
+      <button class="btn-primary" id="btnLogout" type="button">Sair</button>
     </section>
 
     <div class="footer-note">Presença. Consciência. Automação ética.</div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/config.js"></script>
-<script src="js/crs.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/reader.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/app.js"></script>
-
+  <script src="js/app.js"></script>
+  <script src="js/crs.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/reader.js"></script>
+  <script src="js/ui.js"></script>
 </body>
 </html>
