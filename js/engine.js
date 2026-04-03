@@ -2,7 +2,7 @@
   const Engine = {
     getProgress() {
       try {
-        return JSON.parse(localStorage.getItem("elayon_progress")) || {
+        return JSON.parse(localStorage.getItem(ELAYON_CONFIG.storageKeys.progress)) || {
           sessoes: 0,
           fase: "Inato",
           ultimoScore: 0,
@@ -21,7 +21,7 @@
     },
 
     saveProgress(progress) {
-      localStorage.setItem("elayon_progress", JSON.stringify(progress));
+      localStorage.setItem(ELAYON_CONFIG.storageKeys.progress, JSON.stringify(progress));
     },
 
     getPhaseByScore(score) {
@@ -40,6 +40,7 @@
         lowClarity: avg.clareza < t.lowClarity,
         lowStability: avg.estabilidade < t.lowStability,
         lowContinuity: avg.continuidade < t.lowContinuity,
+        lowFirmness: avg.firmeza < t.lowFirmness,
         goodPresence: avg.presenca >= t.goodPresence,
         goodFirmness: avg.firmeza >= t.goodFirmness,
         goodRhythm: avg.ritmo >= t.goodRhythm
@@ -72,12 +73,7 @@
       const avg = snapshot.average;
 
       const score = Math.round(
-        (avg.presenca +
-          avg.clareza +
-          avg.ritmo +
-          avg.firmeza +
-          avg.continuidade +
-          avg.estabilidade) / 6
+        (avg.presenca + avg.clareza + avg.ritmo + avg.firmeza + avg.continuidade + avg.estabilidade) / 6
       );
 
       const fase = this.getPhaseByScore(score);
@@ -86,12 +82,8 @@
       const direction = this.buildDirection(fase, flags, modeLabel);
 
       let leituraBase = "Boa tentativa inicial. Continue repetindo para consolidar presença.";
-      if (fase === "Treinamento") {
-        leituraBase = "Você já mostrou base para entrar em treinamento consciente.";
-      }
-      if (fase === "Apto") {
-        leituraBase = "Você atingiu um nível consistente de prontidão para avançar.";
-      }
+      if (fase === "Treinamento") leituraBase = "Você já mostrou base para entrar em treinamento consciente.";
+      if (fase === "Apto") leituraBase = "Você atingiu um nível consistente de prontidão para avançar.";
 
       return {
         score,
@@ -117,11 +109,10 @@
 
       this.saveProgress(progress);
 
-      localStorage.setItem("elayon_last_result", JSON.stringify({
-        snapshot,
-        result,
-        modeKey
-      }));
+      localStorage.setItem(
+        ELAYON_CONFIG.storageKeys.lastResult,
+        JSON.stringify({ snapshot, result, modeKey })
+      );
 
       return result;
     }
