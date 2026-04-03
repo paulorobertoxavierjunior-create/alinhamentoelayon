@@ -4,18 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Criar acesso</title>
+  <meta name="description" content="Criação de acesso ao ambiente Elayon com autenticação segura e continuidade operacional.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="cadastro">
 
   <main class="entry-shell">
-    <section class="entry-card">
+    <section class="entry-card" aria-labelledby="signupTitle">
 
-      <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="entry-logo">
+      <img
+        src="IMG-20260218-WA0015.jpg"
+        alt="Logo Elayon"
+        class="entry-logo"
+      >
 
       <div class="entry-badge">Cadastro consciente</div>
 
-      <h1 class="entry-title">Criar acesso</h1>
+      <h1 class="entry-title" id="signupTitle">Criar acesso</h1>
 
       <p class="entry-subtitle">
         Cadastre seu acesso para entrar no ambiente do Elayon com segurança,
@@ -28,7 +33,7 @@
           id="signupName"
           name="signupName"
           type="text"
-          placeholder="Seu nome"
+          placeholder="Seu nome completo"
           autocomplete="name"
           required
         >
@@ -40,6 +45,7 @@
           type="email"
           placeholder="seuemail@exemplo.com"
           autocomplete="email"
+          inputmode="email"
           required
         >
 
@@ -58,6 +64,7 @@
             class="toggle-password"
             id="toggleSignupPassword"
             aria-label="Mostrar ou ocultar senha"
+            aria-pressed="false"
           >
             👁
           </button>
@@ -78,6 +85,7 @@
             class="toggle-password"
             id="toggleSignupPasswordConfirm"
             aria-label="Mostrar ou ocultar confirmação de senha"
+            aria-pressed="false"
           >
             👁
           </button>
@@ -95,13 +103,17 @@
         <a href="recuperar.html" class="btn-secondary">Recuperar senha</a>
       </div>
 
+      <div class="entry-links">
+        <a href="apresentacao.html">Conhecer o projeto</a>
+      </div>
+
       <p class="entry-note">
-        Seu acesso será vinculado ao seu ambiente de uso e poderá ser confirmado por e-mail.
+        Seu acesso será vinculado ao seu ambiente de uso e poderá ser gerenciado depois no painel.
       </p>
 
       <p class="entry-security">
-        Esta etapa prepara a autenticação real do sistema. O processamento analítico do CRS
-        permanece separado da autenticação e da interface pública.
+        Esta etapa pertence à camada de autenticação. O processamento analítico do CRS
+        permanece separado da interface pública e será acoplado de forma segura na nuvem.
       </p>
 
     </section>
