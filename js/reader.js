@@ -1,13 +1,5 @@
 (function () {
   const Reader = {
-    rankMetrics(averages) {
-      return Object.entries(averages).sort((a, b) => b[1] - a[1]);
-    },
-
-    weakestMetrics(averages) {
-      return Object.entries(averages).sort((a, b) => a[1] - b[1]);
-    },
-
     metricLabel(key) {
       const labels = {
         presenca: "presença",
@@ -27,16 +19,32 @@
       return `${items.slice(0, -1).join(", ")} e ${items[items.length - 1]}`;
     },
 
-    buildMoments(modeLabel, result, snapshot) {
-      const strong = this.rankMetrics(result.averages).slice(0, 2).map(([k]) => this.metricLabel(k));
-      const weak = this.weakestMetrics(result.averages).slice(0, 2).map(([k]) => this.metricLabel(k));
-      const silence = snapshot?.silenceFrames || 0;
+    rankMetrics(averages = {}) {
+      return Object.entries(averages).sort((a, b) => b[1] - a[1]);
+    },
 
-      if (silence > ELAYON_CONFIG.thresholds.veryHighSilenceFrames) {
+    weakestMetrics(averages = {}) {
+      return Object.entries(averages).sort((a, b) => a[1] - b[1]);
+    },
+
+    buildMoments(modeLabel, result, snapshot) {
+      const strong = this.rankMetrics(result.averages)
+        .slice(0, 2)
+        .map(([k]) => this.metricLabel(k));
+
+      const weak = this.weakestMetrics(result.averages)
+        .slice(0, 2)
+        .map(([k]) => this.metricLabel(k));
+
+      const silence = snapshot?.silenceFrames || 0;
+      const veryHighSilence = window.ELAYON_CONFIG?.thresholds?.veryHighSilenceFrames || 80;
+      const excellentRange = window.ELAYON_CONFIG?.thresholds?.excellentRange || 85;
+
+      if (silence > veryHighSilence) {
         return `Na sessão de ${modeLabel}, houve pausas longas durante a interação. Ainda assim, apareceram sinais importantes de ${this.listToText(strong)}.`;
       }
 
-      if (result.score >= ELAYON_CONFIG.thresholds.excellentRange) {
+      if ((result.score || 0) >= excellentRange) {
         return `Na sessão de ${modeLabel}, sua interação mostrou consistência elevada, com destaque para ${this.listToText(strong)}.`;
       }
 
@@ -44,14 +52,16 @@
     },
 
     buildStrengths(result) {
-      const flags = result.flags;
+      const flags = result.flags || {};
       const strong = [];
 
       if (flags.goodPresence) strong.push("boa presença");
       if (flags.goodFirmness) strong.push("boa firmeza");
       if (flags.goodRhythm) strong.push("ritmo consistente");
 
-      const ranked = this.rankMetrics(result.averages).slice(0, 3).map(([k]) => this.metricLabel(k));
+      const ranked = this.rankMetrics(result.averages)
+        .slice(0, 3)
+        .map(([k]) => this.metricLabel(k));
 
       if (strong.length === 0) {
         return `Os pontos mais fortes desta sessão foram ${this.listToText(ranked)}.`;
@@ -61,11 +71,12 @@
     },
 
     buildImprovements(result, snapshot) {
-      const flags = result.flags;
+      const flags = result.flags || {};
       const notes = [];
       const silence = snapshot?.silenceFrames || 0;
+      const veryHighSilence = window.ELAYON_CONFIG?.thresholds?.veryHighSilenceFrames || 80;
 
-      if (silence > ELAYON_CONFIG.thresholds.veryHighSilenceFrames) {
+      if (silence > veryHighSilence) {
         notes.push("reduzir pausas longas");
       } else if (flags.highSilence) {
         notes.push("manter mais continuidade entre as ideias");
@@ -77,7 +88,10 @@
       if (flags.lowFirmness) notes.push("aumentar a firmeza da conclusão");
 
       if (notes.length === 0) {
-        const weak = this.weakestMetrics(result.averages).slice(0, 2).map(([k]) => this.metricLabel(k));
+        const weak = this.weakestMetrics(result.averages)
+          .slice(0, 2)
+          .map(([k]) => this.metricLabel(k));
+
         return `Vale observar melhor ${this.listToText(weak)} nas próximas sessões.`;
       }
 
@@ -85,14 +99,15 @@
     },
 
     buildEmotional(result, snapshot) {
-      const flags = result.flags;
+      const flags = result.flags || {};
       const silence = snapshot?.silenceFrames || 0;
+      const veryHighSilence = window.ELAYON_CONFIG?.thresholds?.veryHighSilenceFrames || 80;
 
       if (result.fase === "Apto") {
         return "Momento de boa consistência interna, com sinais de prontidão para avançar com mais segurança.";
       }
 
-      if (silence > ELAYON_CONFIG.thresholds.veryHighSilenceFrames) {
+      if (silence > veryHighSilence) {
         return "Momento de elaboração interna mais lenta, com pausas longas que sugerem busca de forma e organização.";
       }
 
@@ -121,10 +136,6 @@
       return "Em construção";
     },
 
-    buildNextStep(result) {
-      return result.direction;
-    },
-
     buildReading(lastResult) {
       if (!lastResult || !lastResult.result) {
         return {
@@ -140,7 +151,10 @@
       }
 
       const { result, modeKey, snapshot } = lastResult;
-      const modeLabel = ELAYON_CONFIG.modes[modeKey]?.label || result.mode || "Sessão";
+      const modeLabel =
+        window.ELAYON_CONFIG?.modes?.[modeKey]?.label ||
+        result.mode ||
+        "Sessão";
 
       return {
         momentos: this.buildMoments(modeLabel, result, snapshot),
@@ -148,9 +162,9 @@
         melhorias: this.buildImprovements(result, snapshot),
         emocional: this.buildEmotional(result, snapshot),
         nivel: this.buildLevel(result),
-        score: result.score,
-        fase: result.fase,
-        proximo: this.buildNextStep(result)
+        score: result.score || 0,
+        fase: result.fase || "Inato",
+        proximo: result.direction || "Continue praticando com calma e constância."
       };
     }
   };
