@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Apresentação</title>
+  <meta name="description" content="Conheça a proposta do Elayon e sua estrutura de presença, autenticação e observação consciente.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="apresentacao">
@@ -12,97 +13,65 @@
     <section class="topbar">
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
       <div>
-        <div class="topbar-title">Treino de apresentação</div>
-        <div class="topbar-sub">Clareza, firmeza e direção</div>
+        <div class="topbar-title">Elayon</div>
+        <div class="topbar-sub">Tecnologia com presença, clareza e direção</div>
       </div>
     </section>
 
     <section class="hero-box">
-      <h1>Apresente sua ideia</h1>
+      <h1>Conheça o projeto</h1>
       <p>
-        Fale como se estivesse diante de uma equipe, uma banca ou uma plateia. O foco aqui
-        é organizar uma mensagem com começo, meio e direção.
-      </p>
-    </section>
-
-    <section class="panel-box">
-      <div class="status-row">
-        <div class="status-pill">Modo: apresentação</div>
-        <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
-      </div>
-
-      <div class="meter-grid">
-        <div class="meter-card">
-          <span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div>
-        </div>
-
-        <div class="meter-card">
-          <span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span>
-          <div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="cta-row">
-      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
-      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
-      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
-      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
-    </section>
-
-    <section class="message-box">
-      <p id="painelMensagem">
-        Apresentar bem não é falar sem falhas. É conseguir sustentar uma ideia com ordem e direção.
+        O Elayon organiza acesso, presença e observação consciente em uma mesma jornada.
+        A autenticação protege o operador. O painel organiza o percurso. As ferramentas
+        ajudam a observar ritmo, clareza e continuidade antes da automação assistida.
       </p>
     </section>
 
     <section class="quick-grid">
       <article class="quick-card">
-        <h3>Dica do modo</h3>
+        <h3>Acesso protegido</h3>
         <p>
-          Pense em uma ideia principal e tente sustentá-la até o final sem se perder do centro.
+          O usuário entra por autenticação segura. A identidade permanece separada da camada
+          analítica e do processamento sensível.
         </p>
       </article>
 
       <article class="quick-card">
-        <h3>Navegação</h3>
+        <h3>Painel central</h3>
         <p>
-          Depois da leitura, você poderá revisar o resultado e acompanhar seu progresso.
+          O painel organiza navegação, fases, sessões e abertura gradual das ferramentas.
         </p>
-        <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
+      </article>
+
+      <article class="quick-card">
+        <h3>Ferramentas de presença</h3>
+        <p>
+          Fala livre, diálogo, aula e áudio compõem a primeira camada de observação do sistema.
+        </p>
+      </article>
+
+      <article class="quick-card">
+        <h3>Conexão futura com nuvem</h3>
+        <p>
+          O front já nasce preparado para evoluir da autenticação e observação local para
+          integração segura com backend e CRS em nuvem.
+        </p>
       </article>
     </section>
 
-    <div class="footer-note">Organizar a fala é organizar a ação.</div>
-  </main>
+    <section class="message-box">
+      <p>
+        Presença primeiro. Estrutura depois. Automação com consciência.
+      </p>
+    </section>
 
-  <script src="js/config.js"></script>
-<script src="js/crs.js"></script>
-<script src="js/engine.js"></script>
-<script src="js/reader.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/app.js"></script>
+    <section class="cta-row">
+      <a class="btn-secondary" href="index.html">Ir para login</a>
+      <a class="btn-primary" href="cadastro.html">Criar acesso</a>
+    </section>
+
+    <div class="footer-note">Conhecer antes de usar também é parte da segurança.</div>
+  </main>
 
 </body>
 </html>
