@@ -56,7 +56,6 @@
 
       try {
         this.reset();
-
         this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const source = this.audioContext.createMediaStreamSource(this.stream);
@@ -64,12 +63,9 @@
         this.analyser = this.audioContext.createAnalyser();
         this.analyser.fftSize = 512;
         this.analyser.smoothingTimeConstant = 0.8;
-
         source.connect(this.analyser);
 
-        const bufferLength = this.analyser.frequencyBinCount;
-        this.dataArray = new Uint8Array(bufferLength);
-
+        this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
         this.active = true;
         this.loop();
       } catch (e) {
@@ -81,17 +77,11 @@
 
     stop() {
       this.active = false;
-
       if (this.raf) cancelAnimationFrame(this.raf);
       this.raf = null;
 
-      if (this.stream) {
-        this.stream.getTracks().forEach(track => track.stop());
-      }
-
-      if (this.audioContext) {
-        this.audioContext.close();
-      }
+      if (this.stream) this.stream.getTracks().forEach(track => track.stop());
+      if (this.audioContext) this.audioContext.close();
 
       this.stream = null;
       this.audioContext = null;
