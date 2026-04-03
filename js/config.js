@@ -1,29 +1,13 @@
 window.ELAYON_CONFIG = {
   appName: "Elayon",
 
-  app: {
-    environment: "production",
-    useSupabaseAuth: true
-  },
-
   routes: {
-    entryPage: "index.html",
-    signupPage: "cadastro.html",
-    recoveryPage: "recuperar.html",
-    connectionPage: "conexao.html",
-    panelPage: "painel.html",
-    resultPage: "resultado.html",
-    nextPageAfterConnection: "painel.html"
+    nextPageAfterConnection: "painel.html",
+    resultPage: "resultado.html"
   },
 
   supabase: {
     url: "https://eudcjihffrfmhzmfwtlg.supabase.co",
-    key: "sb_publishable_eFXj7d8dOSREvEJbZ0xQJg_NgPCI8Nz"
-  },
-
-  storageKeys: {
-    auth: "elayon_auth",
-    progress: "elayon_progress",
-    lastResult: "elayon_last_result"
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0"
   }
 };
