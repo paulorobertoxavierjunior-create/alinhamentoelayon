@@ -25,7 +25,9 @@ window.ELAYON_CONFIG = {
     "cadastro",
     "recuperar",
     "apresentacao",
-    "alinhamento"
+    "alinhamento",
+    "confirmacao",
+    "redefinir-senha"
   ],
 
   protectedPages: [
@@ -68,3 +70,7 @@ window.ELAYON_CONFIG = {
     "audio": { label: "Áudio" }
   }
 };
+
+// compatibilidade direta com o app.js atual
+const SUPABASE_URL = window.ELAYON_CONFIG.supabase.url;
+const SUPABASE_ANON_KEY = window.ELAYON_CONFIG.supabase.anonKey;
