@@ -1,49 +1,75 @@
 (function () {
+  const STORAGE_KEY =
+    window.ELAYON_CONFIG?.storageKeys?.progress || "elayon_progress";
+
+  const LAST_RESULT_KEY =
+    window.ELAYON_CONFIG?.storageKeys?.lastResult || "elayon_last_result";
+
   const Engine = {
+    getDefaultProgress() {
+      return {
+        sessoes: 0,
+        fase: "Inato",
+        ultimoScore: 0,
+        ultimaLeitura: "",
+        direcao: "Continue praticando com calma e constância."
+      };
+    },
+
     getProgress() {
       try {
-        return JSON.parse(localStorage.getItem(ELAYON_CONFIG.storageKeys.progress)) || {
-          sessoes: 0,
-          fase: "Inato",
-          ultimoScore: 0,
-          ultimaLeitura: "",
-          direcao: "Continue praticando com calma e constância."
-        };
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || this.getDefaultProgress();
       } catch {
-        return {
-          sessoes: 0,
-          fase: "Inato",
-          ultimoScore: 0,
-          ultimaLeitura: "",
-          direcao: "Continue praticando com calma e constância."
-        };
+        return this.getDefaultProgress();
       }
     },
 
     saveProgress(progress) {
-      localStorage.setItem(ELAYON_CONFIG.storageKeys.progress, JSON.stringify(progress));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    },
+
+    getThresholds() {
+      return window.ELAYON_CONFIG?.thresholds || {
+        scoreApto: 75,
+        scoreTraining: 50,
+        highSilenceFrames: 40,
+        veryHighSilenceFrames: 80,
+        lowClarity: 40,
+        lowStability: 40,
+        lowContinuity: 40,
+        lowFirmness: 40,
+        goodPresence: 60,
+        goodFirmness: 60,
+        goodRhythm: 60,
+        excellentRange: 85
+      };
+    },
+
+    getModeLabel(modeKey = "fala-livre") {
+      return window.ELAYON_CONFIG?.modes?.[modeKey]?.label || "Sessão";
     },
 
     getPhaseByScore(score) {
-      const t = ELAYON_CONFIG.thresholds;
+      const t = this.getThresholds();
+
       if (score >= t.scoreApto) return "Apto";
       if (score >= t.scoreTraining) return "Treinamento";
       return "Inato";
     },
 
     buildFlags(snapshot) {
-      const avg = snapshot.average;
-      const t = ELAYON_CONFIG.thresholds;
+      const avg = snapshot?.average || {};
+      const t = this.getThresholds();
 
       return {
-        highSilence: snapshot.silenceFrames > t.highSilenceFrames,
-        lowClarity: avg.clareza < t.lowClarity,
-        lowStability: avg.estabilidade < t.lowStability,
-        lowContinuity: avg.continuidade < t.lowContinuity,
-        lowFirmness: avg.firmeza < t.lowFirmness,
-        goodPresence: avg.presenca >= t.goodPresence,
-        goodFirmness: avg.firmeza >= t.goodFirmness,
-        goodRhythm: avg.ritmo >= t.goodRhythm
+        highSilence: (snapshot?.silenceFrames || 0) > t.highSilenceFrames,
+        lowClarity: (avg.clareza || 0) < t.lowClarity,
+        lowStability: (avg.estabilidade || 0) < t.lowStability,
+        lowContinuity: (avg.continuidade || 0) < t.lowContinuity,
+        lowFirmness: (avg.firmeza || 0) < t.lowFirmness,
+        goodPresence: (avg.presenca || 0) >= t.goodPresence,
+        goodFirmness: (avg.firmeza || 0) >= t.goodFirmness,
+        goodRhythm: (avg.ritmo || 0) >= t.goodRhythm
       };
     },
 
@@ -56,9 +82,15 @@
         if (flags.lowStability) {
           return "Você já entrou em treinamento. Agora vale buscar mais estabilidade e calma na sustentação da fala.";
         }
+
         if (flags.lowClarity) {
           return "Você já entrou em treinamento. O próximo passo é organizar melhor a ideia central.";
         }
+
+        if (flags.lowContinuity) {
+          return "Você já entrou em treinamento. Vale sustentar mais a continuidade entre as ideias.";
+        }
+
         return "Você já entrou em treinamento. Continue repetindo para consolidar firmeza e direção.";
       }
 
@@ -70,20 +102,40 @@
     },
 
     evaluate(snapshot, modeKey = "fala-livre") {
-      const avg = snapshot.average;
+      const avg = snapshot?.average || {
+        presenca: 0,
+        clareza: 0,
+        ritmo: 0,
+        firmeza: 0,
+        continuidade: 0,
+        estabilidade: 0
+      };
 
       const score = Math.round(
-        (avg.presenca + avg.clareza + avg.ritmo + avg.firmeza + avg.continuidade + avg.estabilidade) / 6
+        (
+          (avg.presenca || 0) +
+          (avg.clareza || 0) +
+          (avg.ritmo || 0) +
+          (avg.firmeza || 0) +
+          (avg.continuidade || 0) +
+          (avg.estabilidade || 0)
+        ) / 6
       );
 
       const fase = this.getPhaseByScore(score);
       const flags = this.buildFlags(snapshot);
-      const modeLabel = ELAYON_CONFIG.modes[modeKey]?.label || "Sessão";
+      const modeLabel = this.getModeLabel(modeKey);
       const direction = this.buildDirection(fase, flags, modeLabel);
 
       let leituraBase = "Boa tentativa inicial. Continue repetindo para consolidar presença.";
-      if (fase === "Treinamento") leituraBase = "Você já mostrou base para entrar em treinamento consciente.";
-      if (fase === "Apto") leituraBase = "Você atingiu um nível consistente de prontidão para avançar.";
+
+      if (fase === "Treinamento") {
+        leituraBase = "Você já mostrou base para entrar em treinamento consciente.";
+      }
+
+      if (fase === "Apto") {
+        leituraBase = "Você atingiu um nível consistente de prontidão para avançar.";
+      }
 
       return {
         score,
@@ -92,12 +144,14 @@
         direction,
         flags,
         averages: { ...avg },
-        peaks: { ...snapshot.peak },
-        mode: modeLabel
+        peaks: { ...(snapshot?.peak || {}) },
+        snapshot: { ...(snapshot || {}) },
+        mode: modeLabel,
+        modeKey
       };
     },
 
-    commitSession(snapshot, modeKey = "fala-livre") {
+    async commitSession(snapshot, modeKey = "fala-livre") {
       const progress = this.getProgress();
       const result = this.evaluate(snapshot, modeKey);
 
@@ -110,11 +164,21 @@
       this.saveProgress(progress);
 
       localStorage.setItem(
-        ELAYON_CONFIG.storageKeys.lastResult,
-        JSON.stringify({ snapshot, result, modeKey })
+        LAST_RESULT_KEY,
+        JSON.stringify({
+          snapshot,
+          result,
+          modeKey,
+          savedAt: new Date().toISOString()
+        })
       );
 
       return result;
+    },
+
+    clearProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LAST_RESULT_KEY);
     }
   };
 
