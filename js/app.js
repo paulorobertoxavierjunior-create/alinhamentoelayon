@@ -1,277 +1,435 @@
-// ==============================
-// CONFIG
-// ==============================
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+(function () {
+  const CONFIG = window.ELAYON_CONFIG || {};
 
-// ==============================
-// HELPERS
-// ==============================
-function setMessage(elementId, text, type = "") {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-
-  el.textContent = text || "";
-  el.className = "form-message";
-
-  if (type === "error") {
-    el.classList.add("error");
-  }
-
-  if (type === "success") {
-    el.classList.add("success");
-  }
-}
-
-function clearMessage(elementId) {
-  setMessage(elementId, "", "");
-}
-
-function setButtonState(buttonId, isLoading, idleText, loadingText) {
-  const btn = document.getElementById(buttonId);
-  if (!btn) return;
-
-  btn.disabled = isLoading;
-  btn.textContent = isLoading ? loadingText : idleText;
-}
-
-function bindPasswordToggle(buttonId, inputId) {
-  const button = document.getElementById(buttonId);
-  const input = document.getElementById(inputId);
-
-  if (!button || !input) return;
-
-  button.addEventListener("click", () => {
-    const isPassword = input.type === "password";
-    input.type = isPassword ? "text" : "password";
-    button.setAttribute("aria-pressed", isPassword ? "true" : "false");
-    button.textContent = isPassword ? "🙈" : "👁";
-  });
-}
-
-// ==============================
-// PASSWORD TOGGLES
-// ==============================
-bindPasswordToggle("togglePassword", "senha");
-bindPasswordToggle("toggleSignupPassword", "signupPassword");
-bindPasswordToggle("toggleSignupPasswordConfirm", "signupPasswordConfirm");
-
-// ==============================
-// LOGIN
-// ==============================
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-  loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("login")?.value?.trim();
-    const senha = document.getElementById("senha")?.value;
-    const msgId = "formMessage";
-
-    clearMessage(msgId);
-
-    if (!email || !senha) {
-      setMessage(msgId, "Preencha e-mail e senha.", "error");
-      return;
+  function getConfig(path, fallback = null) {
+    try {
+      return path.split(".").reduce((acc, key) => acc[key], CONFIG) ?? fallback;
+    } catch {
+      return fallback;
     }
+  }
 
-    setButtonState("submitButton", true, "Entrar no sistema", "Entrando...");
+  function getPageName() {
+    return document.body?.dataset?.page || "";
+  }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password: senha
-    });
+  function isPublicPage(page) {
+    return (CONFIG.publicPages || []).includes(page);
+  }
+
+  function isProtectedPage(page) {
+    return (CONFIG.protectedPages || []).includes(page);
+  }
+
+  function setMessage(targetId, message, type = "default") {
+    const box = document.getElementById(targetId);
+    if (!box) return;
+
+    box.textContent = message || "";
+    box.className = "form-message";
+
+    if (type === "error") box.classList.add("error");
+    if (type === "success") box.classList.add("success");
+  }
+
+  function setButtonLoading(buttonId, isLoading, defaultText, loadingText) {
+    const button = document.getElementById(buttonId);
+    if (!button) return;
+
+    button.disabled = isLoading;
+    button.textContent = isLoading ? loadingText : defaultText;
+  }
+
+  function normalize(value) {
+    return String(value || "").trim();
+  }
+
+  function getSupabaseClient() {
+    if (!window.supabase || !window.supabase.createClient) return null;
+
+    const supabaseUrl = getConfig("supabase.url", "");
+    const supabaseAnonKey = getConfig("supabase.anonKey", "");
+
+    if (!supabaseUrl || !supabaseAnonKey) return null;
+
+    return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+  }
+
+  async function getSession() {
+    const supabase = getSupabaseClient();
+    if (!supabase) return null;
+
+    const { data, error } = await supabase.auth.getSession();
 
     if (error) {
-      setMessage(msgId, "E-mail ou senha inválidos.", "error");
-      setButtonState("submitButton", false, "Entrar no sistema", "Entrando...");
+      console.error("Erro ao obter sessão:", error);
+      return null;
+    }
+
+    return data?.session || null;
+  }
+
+  async function getUser() {
+    const session = await getSession();
+    return session?.user || null;
+  }
+
+  function persistAuthUser(user) {
+    if (!user) return;
+    localStorage.setItem(
+      "elayon_auth_user",
+      JSON.stringify({
+        id: user.id || "",
+        email: user.email || "",
+        nome: user.user_metadata?.nome || "",
+        updatedAt: new Date().toISOString()
+      })
+    );
+  }
+
+  function clearAuthUser() {
+    localStorage.removeItem("elayon_auth_user");
+  }
+
+  function goTo(routeKey, fallback = "index.html") {
+    const url = getConfig(`routes.${routeKey}`, fallback);
+    window.location.href = url;
+  }
+
+  function getSiteBaseForRedirect() {
+    return "https://paulorobertoxavierjunior-create.github.io/alinhamentoelayon";
+  }
+
+  async function protectRoute() {
+    const page = getPageName();
+
+    if (!page) return;
+
+    const session = await getSession();
+
+    if (isProtectedPage(page) && !session) {
+      goTo("login", "index.html");
       return;
     }
 
-    setMessage(msgId, "Login realizado com sucesso.", "success");
+    if (session?.user) {
+      persistAuthUser(session.user);
+    }
+  }
 
-    setTimeout(() => {
-      window.location.href = "painel.html";
-    }, 500);
-  });
-}
+  async function redirectIfLoggedOnAuthPages() {
+    const page = getPageName();
 
-// ==============================
-// CADASTRO
-// ==============================
-const signupForm = document.getElementById("signupForm");
+    if (!["index", "cadastro"].includes(page)) return;
 
-if (signupForm) {
-  signupForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+    const session = await getSession();
+    if (session) {
+      goTo("afterLogin", "painel.html");
+    }
+  }
 
-    const nome = document.getElementById("signupName")?.value?.trim();
-    const email = document.getElementById("signupEmail")?.value?.trim();
-    const senha = document.getElementById("signupPassword")?.value;
-    const confirmar = document.getElementById("signupPasswordConfirm")?.value;
-    const msgId = "signupMessage";
+  function bindPasswordToggle(buttonId, inputId) {
+    const button = document.getElementById(buttonId);
+    const input = document.getElementById(inputId);
 
-    clearMessage(msgId);
+    if (!button || !input) return;
+
+    button.addEventListener("click", () => {
+      const isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+      button.setAttribute("aria-pressed", String(isPassword));
+      button.textContent = isPassword ? "🙈" : "👁";
+    });
+  }
+
+  async function handleLoginSubmit(event) {
+    event.preventDefault();
+
+    const email = normalize(document.getElementById("login")?.value);
+    const senha = normalize(document.getElementById("senha")?.value);
+
+    if (!email || !senha) {
+      setMessage("formMessage", "Preencha e-mail e senha.", "error");
+      return;
+    }
+
+    setMessage("formMessage", "");
+    setButtonLoading("submitButton", true, "Entrar no sistema", "Entrando...");
+
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      setMessage("formMessage", "Supabase não carregado ou configuração ausente.", "error");
+      setButtonLoading("submitButton", false, "Entrar no sistema", "Entrando...");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password: senha
+      });
+
+      if (error) {
+        setMessage("formMessage", "E-mail ou senha inválidos.", "error");
+        return;
+      }
+
+      if (!data?.session || !data?.user) {
+        setMessage("formMessage", "Sessão não iniciada. Tente novamente.", "error");
+        return;
+      }
+
+      persistAuthUser(data.user);
+      setMessage("formMessage", "Login realizado com sucesso.", "success");
+
+      setTimeout(() => {
+        goTo("afterLogin", "painel.html");
+      }, 700);
+    } catch (err) {
+      console.error(err);
+      setMessage("formMessage", "Erro ao tentar entrar. Tente novamente.", "error");
+    } finally {
+      setButtonLoading("submitButton", false, "Entrar no sistema", "Entrando...");
+    }
+  }
+
+  async function handleSignupSubmit(event) {
+    event.preventDefault();
+
+    const nome = normalize(document.getElementById("signupName")?.value);
+    const email = normalize(document.getElementById("signupEmail")?.value);
+    const senha = normalize(document.getElementById("signupPassword")?.value);
+    const confirmar = normalize(document.getElementById("signupPasswordConfirm")?.value);
 
     if (!nome || !email || !senha || !confirmar) {
-      setMessage(msgId, "Preencha todos os campos.", "error");
+      setMessage("signupMessage", "Preencha todos os campos.", "error");
       return;
     }
 
     if (senha.length < 6) {
-      setMessage(msgId, "A senha precisa ter pelo menos 6 caracteres.", "error");
+      setMessage("signupMessage", "A senha deve ter pelo menos 6 caracteres.", "error");
       return;
     }
 
     if (senha !== confirmar) {
-      setMessage(msgId, "As senhas não coincidem.", "error");
+      setMessage("signupMessage", "As senhas não coincidem.", "error");
       return;
     }
 
-    setButtonState("signupButton", true, "Criar acesso", "Criando acesso...");
+    setMessage("signupMessage", "");
+    setButtonLoading("signupButton", true, "Criar acesso", "Criando...");
 
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password: senha,
-      options: {
-        data: {
-          nome: nome
-        },
-        emailRedirectTo: "https://paulorobertoxavierjunior-create.github.io/alinhamentoelayon/index.html"
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      setMessage("signupMessage", "Supabase não carregado ou configuração ausente.", "error");
+      setButtonLoading("signupButton", false, "Criar acesso", "Criando...");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: senha,
+        options: {
+          emailRedirectTo: `${getSiteBaseForRedirect()}/index.html`,
+          data: {
+            nome
+          }
+        }
+      });
+
+      if (error) {
+        setMessage("signupMessage", error.message || "Erro ao criar acesso.", "error");
+        return;
       }
-    });
 
-    if (error) {
-      setMessage(msgId, error.message || "Erro ao cadastrar.", "error");
-      setButtonState("signupButton", false, "Criar acesso", "Criando acesso...");
-      return;
+      if (!data?.user) {
+        setMessage("signupMessage", "Não foi possível concluir o cadastro.", "error");
+        return;
+      }
+
+      setMessage("signupMessage", "Cadastro realizado. Verifique seu e-mail para confirmar o acesso.", "success");
+
+      setTimeout(() => {
+        goTo("confirmacao", "confirmacao.html");
+      }, 800);
+    } catch (err) {
+      console.error(err);
+      setMessage("signupMessage", "Erro ao criar acesso. Tente novamente.", "error");
+    } finally {
+      setButtonLoading("signupButton", false, "Criar acesso", "Criando...");
     }
+  }
 
-    setMessage(
-      msgId,
-      "Cadastro realizado. Verifique seu e-mail para confirmar o acesso.",
-      "success"
-    );
+  async function handleRecoverySubmit(event) {
+    event.preventDefault();
 
-    setTimeout(() => {
-      window.location.href = "confirmacao.html";
-    }, 1000);
-  });
-}
-
-// ==============================
-// RECUPERAR SENHA
-// ==============================
-const recoveryForm = document.getElementById("recoveryForm");
-
-if (recoveryForm) {
-  recoveryForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById("recoveryEmail")?.value?.trim();
-    const msgId = "recoveryMessage";
-
-    clearMessage(msgId);
+    const email = normalize(document.getElementById("recoveryEmail")?.value);
 
     if (!email) {
-      setMessage(msgId, "Digite seu e-mail.", "error");
+      setMessage("recoveryMessage", "Digite seu e-mail.", "error");
       return;
     }
 
-    setButtonState("recoveryButton", true, "Enviar recuperação", "Enviando...");
+    setMessage("recoveryMessage", "");
+    setButtonLoading("recoveryButton", true, "Enviar recuperação", "Enviando...");
 
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://paulorobertoxavierjunior-create.github.io/alinhamentoelayon/redefinir-senha.html"
-    });
+    const supabase = getSupabaseClient();
 
-    if (error) {
-      setMessage(msgId, error.message || "Erro ao enviar e-mail.", "error");
-      setButtonState("recoveryButton", false, "Enviar recuperação", "Enviando...");
+    if (!supabase) {
+      setMessage("recoveryMessage", "Supabase não carregado ou configuração ausente.", "error");
+      setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
       return;
     }
 
-    setMessage(
-      msgId,
-      "E-mail de redefinição enviado com sucesso.",
-      "success"
-    );
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${getSiteBaseForRedirect()}/redefinir-senha.html`
+      });
 
-    setButtonState("recoveryButton", false, "Enviar recuperação", "Enviando...");
-  });
-}
+      if (error) {
+        setMessage("recoveryMessage", "Erro ao enviar recuperação.", "error");
+        return;
+      }
 
-// ==============================
-// REDEFINIR SENHA
-// ==============================
-const resetForm = document.getElementById("resetForm");
+      setMessage("recoveryMessage", "Link de recuperação enviado para seu e-mail.", "success");
+    } catch (err) {
+      console.error(err);
+      setMessage("recoveryMessage", "Erro ao enviar recuperação. Tente novamente.", "error");
+    } finally {
+      setButtonLoading("recoveryButton", false, "Enviar recuperação", "Enviando...");
+    }
+  }
 
-if (resetForm) {
-  resetForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  async function handleResetPasswordSubmit(event) {
+    event.preventDefault();
 
-    const senha = document.getElementById("senha")?.value;
-    const msgId = "formMessage";
+    const senha = normalize(document.getElementById("resetPassword")?.value);
+    const confirmar = normalize(document.getElementById("resetPasswordConfirm")?.value);
 
-    clearMessage(msgId);
-
-    if (!senha) {
-      setMessage(msgId, "Digite a nova senha.", "error");
+    if (!senha || !confirmar) {
+      setMessage("resetMessage", "Preencha os dois campos.", "error");
       return;
     }
 
     if (senha.length < 6) {
-      setMessage(msgId, "A nova senha precisa ter pelo menos 6 caracteres.", "error");
+      setMessage("resetMessage", "A nova senha deve ter pelo menos 6 caracteres.", "error");
       return;
     }
 
-    const { error } = await supabase.auth.updateUser({
-      password: senha
+    if (senha !== confirmar) {
+      setMessage("resetMessage", "As senhas não coincidem.", "error");
+      return;
+    }
+
+    setMessage("resetMessage", "");
+    setButtonLoading("resetButton", true, "Salvar nova senha", "Salvando...");
+
+    const supabase = getSupabaseClient();
+
+    if (!supabase) {
+      setMessage("resetMessage", "Supabase não carregado ou configuração ausente.", "error");
+      setButtonLoading("resetButton", false, "Salvar nova senha", "Salvando...");
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: senha
+      });
+
+      if (error) {
+        setMessage("resetMessage", "Erro ao redefinir senha.", "error");
+        return;
+      }
+
+      setMessage("resetMessage", "Senha atualizada com sucesso. Faça login novamente.", "success");
+
+      setTimeout(() => {
+        goTo("login", "index.html");
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+      setMessage("resetMessage", "Erro ao redefinir senha. Tente novamente.", "error");
+    } finally {
+      setButtonLoading("resetButton", false, "Salvar nova senha", "Salvando...");
+    }
+  }
+
+  async function handleLogout() {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Erro ao sair:", err);
+    } finally {
+      clearAuthUser();
+      goTo("login", "index.html");
+    }
+  }
+
+  async function bindAuthStateListener() {
+    const supabase = getSupabaseClient();
+    if (!supabase) return;
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      const page = getPageName();
+
+      if (session?.user) {
+        persistAuthUser(session.user);
+      }
+
+      if (event === "SIGNED_OUT") {
+        clearAuthUser();
+
+        if (isProtectedPage(page)) {
+          goTo("login", "index.html");
+        }
+      }
     });
+  }
 
-    if (error) {
-      setMessage(msgId, error.message || "Erro ao redefinir senha.", "error");
-      return;
+  async function bindPageEvents() {
+    bindPasswordToggle("togglePassword", "senha");
+    bindPasswordToggle("toggleSignupPassword", "signupPassword");
+    bindPasswordToggle("toggleSignupPasswordConfirm", "signupPasswordConfirm");
+    bindPasswordToggle("toggleResetPassword", "resetPassword");
+    bindPasswordToggle("toggleResetPasswordConfirm", "resetPasswordConfirm");
+
+    const loginForm = document.getElementById("loginForm");
+    if (loginForm) {
+      loginForm.addEventListener("submit", handleLoginSubmit);
     }
 
-    setMessage(msgId, "Senha atualizada com sucesso.", "success");
-
-    setTimeout(() => {
-      window.location.href = "index.html";
-    }, 1500);
-  });
-}
-
-// ==============================
-// LOGOUT
-// ==============================
-const btnLogout = document.getElementById("logout");
-
-if (btnLogout) {
-  btnLogout.addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    window.location.href = "index.html";
-  });
-}
-
-// ==============================
-// PROTEÇÃO DO PAINEL
-// ==============================
-if (document.body.dataset.page === "painel") {
-  supabase.auth.getSession().then(({ data }) => {
-    if (!data.session) {
-      window.location.href = "index.html";
-      return;
+    const signupForm = document.getElementById("signupForm");
+    if (signupForm) {
+      signupForm.addEventListener("submit", handleSignupSubmit);
     }
 
-    const user = data.session.user;
-    const painelLogin = document.getElementById("painelLogin");
-
-    if (painelLogin) {
-      const nome = user.user_metadata?.nome || "Operador";
-      painelLogin.textContent = `${nome} • ${user.email}`;
+    const recoveryForm = document.getElementById("recoveryForm");
+    if (recoveryForm) {
+      recoveryForm.addEventListener("submit", handleRecoverySubmit);
     }
+
+    const resetForm = document.getElementById("resetForm");
+    if (resetForm) {
+      resetForm.addEventListener("submit", handleResetPasswordSubmit);
+    }
+
+    const logoutButton = document.getElementById("logout");
+    if (logoutButton) {
+      logoutButton.addEventListener("click", handleLogout);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    await bindAuthStateListener();
+    await protectRoute();
+    await redirectIfLoggedOnAuthPages();
+    await bindPageEvents();
   });
-}
+})();
