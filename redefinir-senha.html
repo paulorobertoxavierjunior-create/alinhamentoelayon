@@ -2,30 +2,77 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Redefinir senha • Elayon</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elayon • Redefinir senha</title>
+  <meta name="description" content="Defina uma nova senha para continuar seu acesso ao ambiente Elayon.">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-page="redefinir-senha">
 
-<main class="entry-shell">
-  <section class="entry-card">
+  <main class="entry-shell">
+    <section class="entry-card" aria-labelledby="resetTitle">
 
-    <img src="IMG-20260218-WA0015.jpg" class="entry-logo">
+      <img
+        src="IMG-20260218-WA0015.jpg"
+        alt="Logo Elayon"
+        class="entry-logo"
+      >
 
-    <h1>Nova senha</h1>
+      <div class="entry-badge">Nova senha</div>
 
-    <form id="resetForm">
-      <input type="password" id="senha" placeholder="Nova senha" required>
-      <button type="submit" class="btn-primary">Salvar nova senha</button>
-      <div id="formMessage"></div>
-    </form>
+      <h1 class="entry-title" id="resetTitle">Redefinir senha</h1>
 
-  </section>
-</main>
+      <p class="entry-subtitle">
+        Digite sua nova senha para concluir a recuperação de acesso com segurança.
+      </p>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
+      <form id="resetForm" class="entry-form" novalidate>
+        <label for="senha">Nova senha</label>
+        <div class="password-wrap">
+          <input
+            id="senha"
+            name="senha"
+            type="password"
+            placeholder="Digite sua nova senha"
+            autocomplete="new-password"
+            required
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            id="togglePassword"
+            aria-label="Mostrar ou ocultar senha"
+            aria-pressed="false"
+          >
+            👁
+          </button>
+        </div>
 
+        <button class="btn-primary" id="resetButton" type="submit">
+          Salvar nova senha
+        </button>
+
+        <div id="formMessage" class="form-message" aria-live="polite"></div>
+      </form>
+
+      <div class="entry-actions">
+        <a href="index.html" class="btn-secondary">Voltar ao login</a>
+        <a href="https://elayon.space/projeto/" target="_blank" rel="noopener noreferrer" class="btn-secondary">Conhecer o projeto</a>
+      </div>
+
+      <p class="entry-note">
+        Depois de salvar a nova senha, o acesso poderá ser retomado normalmente pelo login.
+      </p>
+
+      <p class="entry-security">
+        Esta etapa pertence exclusivamente à autenticação. O ambiente analítico do Elayon permanece isolado dessa operação.
+      </p>
+
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
