@@ -48,6 +48,10 @@
         return `Na sessão de ${modeLabel}, sua interação mostrou consistência elevada, com destaque para ${this.listToText(strong)}.`;
       }
 
+      if (!strong.length && !weak.length) {
+        return `Na sessão de ${modeLabel}, ainda não há dados suficientes para uma leitura detalhada.`;
+      }
+
       return `Na sessão de ${modeLabel}, sua interação mostrou mais força em ${this.listToText(strong)}, com espaço de crescimento em ${this.listToText(weak)}.`;
     },
 
@@ -64,6 +68,9 @@
         .map(([k]) => this.metricLabel(k));
 
       if (strong.length === 0) {
+        if (!ranked.length) {
+          return "Ainda não há dados suficientes para identificar pontos fortes.";
+        }
         return `Os pontos mais fortes desta sessão foram ${this.listToText(ranked)}.`;
       }
 
@@ -91,6 +98,10 @@
         const weak = this.weakestMetrics(result.averages)
           .slice(0, 2)
           .map(([k]) => this.metricLabel(k));
+
+        if (!weak.length) {
+          return "Ainda não há dados suficientes para sugerir melhorias.";
+        }
 
         return `Vale observar melhor ${this.listToText(weak)} nas próximas sessões.`;
       }
