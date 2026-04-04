@@ -10,22 +10,32 @@
     return "fala-livre";
   }
 
-  function getAuthUser() {
-    try {
-      return JSON.parse(localStorage.getItem("elayon_auth_user") || "null");
-    } catch {
+  async function getAuthUser() {
+    if (!window.supabase || !window.ELAYON_CONFIG?.supabase?.url || !window.ELAYON_CONFIG?.supabase?.anonKey) {
       return null;
     }
+
+    const client = window.supabase.createClient(
+      window.ELAYON_CONFIG.supabase.url,
+      window.ELAYON_CONFIG.supabase.anonKey
+    );
+
+    const { data } = await client.auth.getSession();
+    return data?.session?.user || null;
   }
 
   async function hydrateUser() {
-    const localUser = getAuthUser();
+    const authUser = await getAuthUser();
+
     const progress = window.ELAYON_ENGINE
       ? window.ELAYON_ENGINE.getProgress()
       : { fase: "Inato", sessoes: 0, ultimoScore: 0, direcao: "" };
 
-    if (localUser?.email) {
-      setText("painelLogin", `Operador: ${localUser.email}`);
+    if (authUser?.email) {
+      const nome = authUser.user_metadata?.nome || "Operador";
+      setText("painelLogin", `${nome} • ${authUser.email}`);
+      setText("perfilNome", nome);
+      setText("perfilEmail", authUser.email);
     }
 
     setText("faseAtualPainel", progress.fase || "Inato");
@@ -84,6 +94,8 @@
 
         const progress = window.ELAYON_ENGINE.getProgress();
         setText("totalSessoesPainel", String(progress.sessoes || 0));
+        setText("ultimoScorePainel", String(progress.ultimoScore || 0));
+        setText("direcaoPainel", progress.direcao || "Continue praticando com calma e constância.");
         setText("painelMensagem", result.leituraBase || "Sessão registrada.");
         setText("crsStatus", "finalizado");
 
