@@ -6,7 +6,11 @@ window.ELAYON_CONFIG = {
     login: "index.html",
     signup: "cadastro.html",
     recovery: "recuperar.html",
+    resetPassword: "redefinir-senha.html",
+    confirmacao: "confirmacao.html",
     painel: "painel.html",
+    perfil: "perfil.html",
+    deleteAccount: "excluir-conta.html",
     apresentacao: "apresentacao.html",
     alinhamento: "alinhamento.html",
     resultPage: "resultado.html",
@@ -18,6 +22,23 @@ window.ELAYON_CONFIG = {
     url: "https://eudcjihffrfmhzmfwtlg.supabase.co",
     publishableKey: "sb_publishable_eFXj7d8dOSREvEJbZ0xQJg_NgPCI8Nz",
     anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1ZGNqaWhmZnJmbWh6bWZ3dGxnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NDE3MjUsImV4cCI6MjA5MDMxNzcyNX0.2tod6vvl_4SAXzSmW1wU8Mk9pLn8fvhF2xrAZOysUu0"
+  },
+
+  cloud: {
+    enabled: false,
+    crsEndpoint: "",
+    timeoutMs: 15000
+  },
+
+  support: {
+    email: "suporte@elayon.space",
+    deleteAccountSubject: "Solicitação de exclusão de conta"
+  },
+
+  projectLinks: {
+    wordpressHome: "https://elayon.space/",
+    wordpressProjeto: "https://elayon.space/projeto/",
+    githubApp: "https://paulorobertoxavierjunior-create.github.io/alinhamentoelayon/index.html"
   },
 
   publicPages: [
@@ -32,6 +53,8 @@ window.ELAYON_CONFIG = {
 
   protectedPages: [
     "painel",
+    "perfil",
+    "excluir-conta",
     "fala-livre",
     "dialogo",
     "aula",
