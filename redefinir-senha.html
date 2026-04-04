@@ -23,15 +23,15 @@
       <h1 class="entry-title" id="resetTitle">Redefinir senha</h1>
 
       <p class="entry-subtitle">
-        Digite sua nova senha para concluir a recuperação de acesso com segurança.
+        Digite e confirme sua nova senha para concluir a recuperação de acesso com segurança.
       </p>
 
       <form id="resetForm" class="entry-form" novalidate>
-        <label for="senha">Nova senha</label>
+        <label for="resetPassword">Nova senha</label>
         <div class="password-wrap">
           <input
-            id="senha"
-            name="senha"
+            id="resetPassword"
+            name="resetPassword"
             type="password"
             placeholder="Digite sua nova senha"
             autocomplete="new-password"
@@ -40,8 +40,29 @@
           <button
             type="button"
             class="toggle-password"
-            id="togglePassword"
-            aria-label="Mostrar ou ocultar senha"
+            id="toggleResetPassword"
+            aria-label="Mostrar ou ocultar nova senha"
+            aria-pressed="false"
+          >
+            👁
+          </button>
+        </div>
+
+        <label for="resetPasswordConfirm">Confirmar nova senha</label>
+        <div class="password-wrap">
+          <input
+            id="resetPasswordConfirm"
+            name="resetPasswordConfirm"
+            type="password"
+            placeholder="Repita sua nova senha"
+            autocomplete="new-password"
+            required
+          >
+          <button
+            type="button"
+            class="toggle-password"
+            id="toggleResetPasswordConfirm"
+            aria-label="Mostrar ou ocultar confirmação da nova senha"
             aria-pressed="false"
           >
             👁
@@ -52,7 +73,7 @@
           Salvar nova senha
         </button>
 
-        <div id="formMessage" class="form-message" aria-live="polite"></div>
+        <div id="resetMessage" class="form-message" aria-live="polite"></div>
       </form>
 
       <div class="entry-actions">
@@ -61,7 +82,7 @@
       </div>
 
       <p class="entry-note">
-        Depois de salvar a nova senha, o acesso poderá ser retomado normalmente pelo login.
+        Depois de salvar a nova senha, o acesso poderá ser retomado normalmente pela página de login.
       </p>
 
       <p class="entry-security">
