@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Teste CRS</title>
+</head>
+<body>
+
+<button onclick="testar()">Testar CRS</button>
+
+<pre id="res"></pre>
+
+<script>
+async function testar() {
+  const res = await fetch("https://crs-elayon.onrender.com/api/crs/analisar", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      context: "teste",
+      transcript_raw: "fala de teste",
+      duration_sec: 10,
+      silence_pct: 30,
+      pause_count: 5,
+      mean_pause_ms: 300
+    })
+  });
+
+  const data = await res.json();
+  document.getElementById("res").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
