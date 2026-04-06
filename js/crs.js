@@ -173,39 +173,32 @@
 
     getAverageVolume(arr) {
       let sum = 0;
-
       for (let i = 0; i < arr.length; i++) {
         sum += arr[i];
       }
-
       return Math.max(0, Math.min(100, Math.round(sum / arr.length)));
     },
 
     computeRitmo(volume, delta, speaking) {
       if (!speaking) return Math.max(this.current.ritmo - 1.2, 10);
-
       const stabilityBonus = Math.max(0, 18 - delta);
       return Math.max(10, Math.min(100, Math.round(volume * 0.9 + stabilityBonus)));
     },
 
     computeFirmeza(volume, delta, speaking) {
       if (!speaking) return Math.max(this.current.firmeza - 1.4, 10);
-
       const tremorPenalty = Math.min(20, delta);
       return Math.max(10, Math.min(100, Math.round(volume + 18 - tremorPenalty)));
     },
 
     computeContinuidade(speaking) {
       const speechWeight = Math.min(100, 12 + this.speechFrames * 0.9);
-
       if (speaking) return speechWeight;
-
       return Math.max(10, this.current.continuidade - 0.8);
     },
 
     computeEstabilidade(delta, speaking) {
       if (!speaking) return Math.max(this.current.estabilidade - 0.7, 10);
-
       return Math.max(10, Math.min(100, Math.round(100 - Math.min(55, delta * 2.2))));
     },
 
@@ -213,7 +206,6 @@
       const rise = 0.18;
       const fall = 0.025;
       const rate = target > current ? rise : (speaking ? 0.06 : fall);
-
       return Math.max(10, Math.min(100, Math.round(current + (target - current) * rate)));
     },
 
@@ -227,7 +219,6 @@
 
     updateAverages() {
       this.samples++;
-
       for (const k in this.current) {
         this.average[k] = Math.round(
           ((this.average[k] * (this.samples - 1)) + this.current[k]) / this.samples
@@ -238,17 +229,14 @@
     mapRange(value, inMin, inMax, outMin, outMax) {
       if (value <= inMin) return outMin;
       if (value >= inMax) return outMax;
-
       const ratio = (value - inMin) / (inMax - inMin);
       return Math.round(outMin + ratio * (outMax - outMin));
     },
 
     getDurationSeconds() {
       if (!this.startedAt) return 0;
-
       const end = this.endedAt ? new Date(this.endedAt).getTime() : Date.now();
       const start = new Date(this.startedAt).getTime();
-
       return Math.max(0, Math.round((end - start) / 1000));
     },
 
@@ -278,16 +266,42 @@
       };
     },
 
-    async sendToCloud(payload) {
+    async sendToCloud(extra = {}) {
+      const cloudEnabled = window.ELAYON_CONFIG?.cloud?.enabled;
       const endpoint = window.ELAYON_CONFIG?.cloud?.crsEndpoint;
+
+      if (!cloudEnabled) {
+        return {
+          ok: false,
+          skipped: true,
+          reason: "cloud_desabilitada"
+        };
+      }
 
       if (!endpoint) {
         return {
           ok: false,
           skipped: true,
-          reason: "endpoint_não_configurado"
+          reason: "endpoint_nao_configurado"
         };
       }
+
+      const snapshot = this.snapshot();
+
+      const payload = {
+        context: extra.context || "fala livre",
+        transcript_raw: extra.transcript_raw || "",
+        duration_sec: snapshot.durationSeconds || 0,
+        silence_pct: snapshot.samples
+          ? Number(((snapshot.silenceFrames / snapshot.samples) * 100).toFixed(2))
+          : 0,
+        pause_count: extra.pause_count || 0,
+        mean_pause_ms: extra.mean_pause_ms || 0,
+        source_text: extra.source_text || "",
+        timeline_events: extra.timeline_events || [],
+        uploaded_file_name: extra.uploaded_file_name || "",
+        snapshot
+      };
 
       try {
         const response = await fetch(endpoint, {
