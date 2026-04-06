@@ -4,6 +4,19 @@
     if (el) el.textContent = text;
   }
 
+  function falarTexto(texto) {
+    if (!texto || !("speechSynthesis" in window)) return;
+
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = "pt-BR";
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+
   function getPageModeKey() {
     const page = document.body.dataset.page || "";
     if (window.ELAYON_CONFIG?.modes?.[page]) return page;
@@ -11,7 +24,11 @@
   }
 
   async function getAuthUser() {
-    if (!window.supabase || !window.ELAYON_CONFIG?.supabase?.url || !window.ELAYON_CONFIG?.supabase?.anonKey) {
+    if (
+      !window.supabase ||
+      !window.ELAYON_CONFIG?.supabase?.url ||
+      !window.ELAYON_CONFIG?.supabase?.anonKey
+    ) {
       return null;
     }
 
@@ -41,7 +58,10 @@
     setText("faseAtualPainel", progress.fase || "Inato");
     setText("totalSessoesPainel", String(progress.sessoes || 0));
     setText("ultimoScorePainel", String(progress.ultimoScore || 0));
-    setText("direcaoPainel", progress.direcao || "Continue praticando com calma e constância.");
+    setText(
+      "direcaoPainel",
+      progress.direcao || "Continue praticando com calma e constância."
+    );
   }
 
   async function bindCRSControls() {
@@ -54,29 +74,42 @@
     if (btnStart) {
       btnStart.addEventListener("click", async () => {
         if (!window.ELAYON_CRS) return;
+
         await window.ELAYON_CRS.start();
         setText("crsStatus", "captando");
-        setText("painelMensagem", "Captação iniciada. Fale com naturalidade e observe a média da sua presença.");
+        setText(
+          "painelMensagem",
+          "Captação iniciada. Fale com naturalidade e observe a média da sua presença."
+        );
       });
     }
 
     if (btnPause) {
-      btnPause.addEventListener("click", () => {
+      btnPause.addEventListener("click", async () => {
         if (!window.ELAYON_CRS) return;
-        window.ELAYON_CRS.stop();
+
+        await window.ELAYON_CRS.stop();
         setText("crsStatus", "pausado");
-        setText("painelMensagem", "Pausa feita. Respire, reorganize a ideia e continue quando quiser.");
+        setText(
+          "painelMensagem",
+          "Pausa feita. Respire, reorganize a ideia e continue quando quiser."
+        );
       });
     }
 
     if (btnRestart) {
-      btnRestart.addEventListener("click", () => {
+      btnRestart.addEventListener("click", async () => {
         if (!window.ELAYON_CRS) return;
-        window.ELAYON_CRS.stop();
+
+        await window.ELAYON_CRS.stop();
         window.ELAYON_CRS.reset();
         window.ELAYON_CRS.render();
+
         setText("crsStatus", "reiniciado");
-        setText("painelMensagem", "Sessão reiniciada. Recomece com mais presença e direção.");
+        setText(
+          "painelMensagem",
+          "Sessão reiniciada. Recomece com mais presença e direção."
+        );
       });
     }
 
@@ -84,7 +117,7 @@
       btnStop.addEventListener("click", async () => {
         if (!window.ELAYON_CRS || !window.ELAYON_ENGINE) return;
 
-        window.ELAYON_CRS.stop();
+        await window.ELAYON_CRS.stop();
 
         const snapshot = window.ELAYON_CRS.snapshot();
         const modeKey = getPageModeKey();
@@ -95,7 +128,10 @@
         const progress = window.ELAYON_ENGINE.getProgress();
         setText("totalSessoesPainel", String(progress.sessoes || 0));
         setText("ultimoScorePainel", String(progress.ultimoScore || 0));
-        setText("direcaoPainel", progress.direcao || "Continue praticando com calma e constância.");
+        setText(
+          "direcaoPainel",
+          progress.direcao || "Continue praticando com calma e constância."
+        );
         setText("painelMensagem", result.leituraBase || "Sessão registrada.");
         setText("crsStatus", "finalizado");
 
@@ -104,8 +140,43 @@
           btnConectarPC.classList.add("btn-primary");
         }
 
+        const cloudResponse = await window.ELAYON_CRS.sendToCloud({
+          context: "fala livre",
+          transcript_raw: "",
+          source_text: ""
+        });
+
+        if (cloudResponse?.ok && cloudResponse?.data) {
+          localStorage.setItem(
+            "elayon_last_cloud_result",
+            JSON.stringify(cloudResponse.data)
+          );
+
+          const summary =
+            cloudResponse.data?.user_report?.summary ||
+            "Leitura em nuvem concluída com sucesso.";
+
+          setText("painelMensagem", summary);
+          falarTexto(summary);
+
+          if (document.body.dataset.page !== "painel") {
+            const next =
+              window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
+            window.location.href = next;
+          }
+
+          return;
+        }
+
+        if (cloudResponse?.skipped) {
+          console.warn("Nuvem ignorada:", cloudResponse.reason);
+        } else {
+          console.warn("Falha na resposta da nuvem:", cloudResponse);
+        }
+
         if (document.body.dataset.page !== "painel") {
-          const next = window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
+          const next =
+            window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
           window.location.href = next;
         }
       });
@@ -114,10 +185,14 @@
     if (btnConectarPC) {
       btnConectarPC.addEventListener("click", () => {
         const progress = window.ELAYON_ENGINE?.getProgress?.();
+
         if (!progress || progress.fase !== "Apto") {
-          alert("Continue praticando. A conexão com o Elayon PC será liberada quando você atingir a fase Apto.");
+          alert(
+            "Continue praticando. A conexão com o Elayon PC será liberada quando você atingir a fase Apto."
+          );
           return;
         }
+
         alert("Conexão simbólica com Elayon PC liberada.");
       });
     }
@@ -126,12 +201,20 @@
   function fillResultado() {
     if (!window.ELAYON_READER) return;
 
-    let last = null;
+    let localResult = null;
+    let cloudResult = null;
+
     try {
-      last = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
+      localResult = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
     } catch {}
 
-    const reading = window.ELAYON_READER.buildReading(last);
+    try {
+      cloudResult = JSON.parse(
+        localStorage.getItem("elayon_last_cloud_result") || "null"
+      );
+    } catch {}
+
+    const reading = window.ELAYON_READER.buildReading(localResult);
 
     setText("resultadoMomentos", reading.momentos);
     setText("resultadoFortes", reading.fortes);
@@ -141,6 +224,10 @@
     setText("resultadoScore", String(reading.score));
     setText("resultadoFase", reading.fase);
     setText("resultadoProximo", reading.proximo);
+
+    if (cloudResult?.user_report?.summary) {
+      setText("resultadoEmocional", cloudResult.user_report.summary);
+    }
   }
 
   function bindCheckout() {
@@ -148,7 +235,9 @@
     if (!btn) return;
 
     btn.addEventListener("click", () => {
-      alert("Adesão simbólica confirmada. Próxima etapa: expandir a conexão entre presença, trabalho e automação ética.");
+      alert(
+        "Adesão simbólica confirmada. Próxima etapa: expandir a conexão entre presença, trabalho e automação ética."
+      );
     });
   }
 
