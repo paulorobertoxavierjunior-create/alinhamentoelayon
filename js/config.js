@@ -25,13 +25,13 @@ window.ELAYON_CONFIG = {
   },
 
   cloud: {
-    enabled: false,
-    crsEndpoint: "",
+    enabled: true,
+    crsEndpoint: "https://nucleo-crs-elayon.onrender.com/api/crs/analisar",
     timeoutMs: 15000
   },
 
   support: {
-    email: "suporte@elayon.space",
+    email: "contato.elayon@gmail.com",
     deleteAccountSubject: "Solicitação de exclusão de conta"
   },
 
