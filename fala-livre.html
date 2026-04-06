@@ -4,69 +4,189 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elayon • Fala Livre</title>
+  <meta name="description" content="Cockpit de presença com captação de fala, leitura em tempo real e resposta guiada.">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body data-page="fala-livre">
 
-  <main class="page-shell">
+  <main class="page-shell cockpit-shell">
     <section class="topbar">
       <img src="IMG-20260218-WA0015.jpg" alt="Logo Elayon" class="topbar-logo">
       <div>
         <div class="topbar-title">Fala Livre</div>
-        <div class="topbar-sub">Primeiro espelho da consciência</div>
+        <div class="topbar-sub">Cockpit de presença e leitura da fala</div>
       </div>
     </section>
 
     <section class="hero-box">
-      <h1>Fale com naturalidade</h1>
+      <h1>Ative sua presença</h1>
       <p>
-        Escolha um tema simples e fale por alguns segundos. O sistema acompanha sua presença
-        e devolve sinais para você se observar com mais clareza.
+        Fale com naturalidade. O sistema acompanha sua fala, mostra a transcrição ao vivo,
+        organiza sinais de ritmo e devolve uma leitura curta para ajudar você a ajustar o foco.
       </p>
     </section>
 
     <section class="panel-box">
       <div class="status-row">
-        <div class="status-pill">Modo: fala livre</div>
+        <div class="status-pill">Modo: <span>Fala Livre</span></div>
         <div class="status-pill">Status: <span id="crsStatus">aguardando</span></div>
+        <div class="status-pill">Tendência: <span id="crsTrend">inicial</span></div>
       </div>
-
-      <div class="meter-grid">
-        <div class="meter-card"><span>Presença • <small data-crs-label="presenca">12%</small> • <small data-crs-peak="presenca">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="presenca" style="width:12%"></div></div></div>
-        <div class="meter-card"><span>Clareza • <small data-crs-label="clareza">12%</small> • <small data-crs-peak="clareza">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="clareza" style="width:12%"></div></div></div>
-        <div class="meter-card"><span>Ritmo • <small data-crs-label="ritmo">12%</small> • <small data-crs-peak="ritmo">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="ritmo" style="width:12%"></div></div></div>
-        <div class="meter-card"><span>Firmeza • <small data-crs-label="firmeza">12%</small> • <small data-crs-peak="firmeza">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="firmeza" style="width:12%"></div></div></div>
-        <div class="meter-card"><span>Continuidade • <small data-crs-label="continuidade">12%</small> • <small data-crs-peak="continuidade">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="continuidade" style="width:12%"></div></div></div>
-        <div class="meter-card"><span>Estabilidade • <small data-crs-label="estabilidade">12%</small> • <small data-crs-peak="estabilidade">pico 12%</small></span><div class="meter-track"><div class="meter-fill" data-crs="estabilidade" style="width:12%"></div></div></div>
-      </div>
-    </section>
-
-    <section class="cta-row">
-      <button class="btn-primary" id="btnStartCRS" type="button">Iniciar</button>
-      <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
-      <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
-      <button class="btn-secondary" id="btnStopCRS" type="button">Finalizar leitura</button>
-    </section>
-
-    <section class="message-box">
-      <p id="painelMensagem">
-        Fale como você está. Não tente parecer perfeito. A sinceridade costuma mostrar mais presença do que a performance.
-      </p>
     </section>
 
     <section class="quick-grid">
       <article class="quick-card">
-        <h3>Dica do processo</h3>
-        <p>A barra representa a média da sessão. Se você mantiver constância, ela se sustenta melhor.</p>
+        <h3>Como quer se preparar?</h3>
+        <p>Defina rapidamente o foco desta interação.</p>
+
+        <label for="falaTema">Tema</label>
+        <input
+          id="falaTema"
+          type="text"
+          class="entry-input"
+          placeholder="Ex.: reunião, decisão, explicação, estudo"
+        >
+
+        <label for="falaObjetivo">Objetivo</label>
+        <input
+          id="falaObjetivo"
+          type="text"
+          class="entry-input"
+          placeholder="Ex.: ganhar clareza, testar firmeza, reduzir pausas"
+        >
+
+        <div class="cta-row" style="margin-top:12px;">
+          <button class="btn-primary" id="btnStartCRS" type="button">Ativar presença</button>
+          <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
+          <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
+          <button class="btn-secondary" id="btnStopCRS" type="button">Ler agora</button>
+        </div>
       </article>
+
       <article class="quick-card">
-        <h3>Navegação</h3>
-        <p>Ao finalizar a leitura, você poderá ir para resultado, progresso ou voltar ao painel.</p>
-        <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
+        <h3>Fala ao vivo</h3>
+        <p id="painelMensagem">
+          Quando você começar, sua fala aparecerá aqui em tempo real para apoiar sua auto-observação.
+        </p>
+
+        <div class="message-box" style="margin-top:10px;">
+          <strong>Transcrição ao vivo</strong>
+          <p id="transcricaoAoVivo" style="min-height:110px; white-space:pre-wrap;">
+            Aguardando início da fala...
+          </p>
+        </div>
       </article>
     </section>
 
-    <div class="footer-note">Falar. Observar. Ajustar.</div>
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Painel de sinais</h3>
+
+        <div class="mini-meter-list">
+          <div class="mini-meter-item">
+            <span>Presença</span>
+            <small data-crs-label="presenca">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="presenca" style="width:12%"></div>
+          </div>
+
+          <div class="mini-meter-item">
+            <span>Clareza</span>
+            <small data-crs-label="clareza">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="clareza" style="width:12%"></div>
+          </div>
+
+          <div class="mini-meter-item">
+            <span>Ritmo</span>
+            <small data-crs-label="ritmo">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="ritmo" style="width:12%"></div>
+          </div>
+
+          <div class="mini-meter-item">
+            <span>Firmeza</span>
+            <small data-crs-label="firmeza">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="firmeza" style="width:12%"></div>
+          </div>
+
+          <div class="mini-meter-item">
+            <span>Continuidade</span>
+            <small data-crs-label="continuidade">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="continuidade" style="width:12%"></div>
+          </div>
+
+          <div class="mini-meter-item">
+            <span>Estabilidade</span>
+            <small data-crs-label="estabilidade">12%</small>
+          </div>
+          <div class="meter-track">
+            <div class="meter-fill" data-crs="estabilidade" style="width:12%"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="quick-card">
+        <h3>Memória curta</h3>
+        <p>Leitura comparativa dos ciclos mais recentes.</p>
+
+        <div class="status-row" style="margin-top:12px;">
+          <div class="status-pill">Atual: <span id="memoriaAtual">—</span></div>
+          <div class="status-pill">Anterior: <span id="memoriaAnterior">—</span></div>
+          <div class="status-pill">Tendência: <span id="memoriaTendencia">—</span></div>
+        </div>
+
+        <div class="message-box" style="margin-top:12px;">
+          <p id="memoriaResumo">
+            Ainda não há histórico curto suficiente para comparação.
+          </p>
+        </div>
+      </article>
+    </section>
+
+    <section class="quick-grid">
+      <article class="quick-card">
+        <h3>Resposta do sistema</h3>
+        <p>
+          A ferramenta devolve uma leitura curta, objetiva e útil para você ajustar a próxima fala.
+        </p>
+
+        <div class="message-box" style="margin-top:12px;">
+          <p id="respostaIA" style="min-height:120px;">
+            A resposta da ferramenta aparecerá aqui depois da primeira leitura.
+          </p>
+        </div>
+
+        <div class="cta-row" style="margin-top:12px;">
+          <button class="btn-secondary" id="btnOuvirResposta" type="button">Ouvir resposta</button>
+          <button class="btn-primary" id="btnContinuarLoop" type="button">Continuar falando</button>
+        </div>
+      </article>
+
+      <article class="quick-card">
+        <h3>Leitura operacional</h3>
+        <div class="message-box" style="margin:0;">
+          <p id="resumoOperacional">
+            Use esta área para observar foco, continuidade e prontidão ao longo da interação.
+          </p>
+        </div>
+
+        <div class="footer-note" style="margin-top:16px;">
+          Falar. Observar. Ajustar. Continuar.
+        </div>
+      </article>
+    </section>
+
+    <section class="cta-row">
+      <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
