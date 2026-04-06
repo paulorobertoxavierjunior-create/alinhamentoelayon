@@ -23,6 +23,10 @@
     return "fala-livre";
   }
 
+  function isCockpitPage() {
+    return document.body.dataset.page === "fala-livre";
+  }
+
   async function getAuthUser() {
     if (
       !window.supabase ||
@@ -64,12 +68,103 @@
     );
   }
 
+  function saveLoopMemory(entry) {
+    const key = "elayon_loop_memory";
+    let items = [];
+
+    try {
+      items = JSON.parse(localStorage.getItem(key) || "[]");
+    } catch {}
+
+    items.push({
+      at: new Date().toISOString(),
+      ...entry
+    });
+
+    items = items.slice(-3);
+    localStorage.setItem(key, JSON.stringify(items));
+    return items;
+  }
+
+  function readLoopMemory() {
+    try {
+      return JSON.parse(localStorage.getItem("elayon_loop_memory") || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function updateLoopMemoryUI() {
+    const items = readLoopMemory();
+    const atual = items[items.length - 1] || null;
+    const anterior = items[items.length - 2] || null;
+
+    setText("memoriaAtual", atual?.label || "—");
+    setText("memoriaAnterior", anterior?.label || "—");
+
+    if (!atual || !anterior) {
+      setText("memoriaTendencia", "inicial");
+      setText(
+        "memoriaResumo",
+        "Ainda não há histórico curto suficiente para comparação."
+      );
+      setText("crsTrend", "inicial");
+      return;
+    }
+
+    let tendencia = "mantendo";
+    if ((atual.score || 0) > (anterior.score || 0)) tendencia = "melhorando";
+    if ((atual.score || 0) < (anterior.score || 0)) tendencia = "oscilando";
+
+    setText("memoriaTendencia", tendencia);
+    setText("crsTrend", tendencia);
+    setText(
+      "memoriaResumo",
+      `Leitura atual: ${atual.label}. Comparada à anterior, a tendência está ${tendencia}.`
+    );
+  }
+
+  function classifyLoopLabel(score, fase) {
+    if (fase === "Apto" || score >= 75) return "foco alto";
+    if (fase === "Treinamento" || score >= 50) return "em ajuste";
+    return "instável";
+  }
+
+  function fillCockpitReading(localResult, cloudResult) {
+    if (!isCockpitPage()) return;
+
+    const localScore = localResult?.result?.score || 0;
+    const localFase = localResult?.result?.fase || "Inato";
+    const label = classifyLoopLabel(localScore, localFase);
+
+    setText("memoriaAtual", label);
+
+    const summary =
+      cloudResult?.user_report?.summary ||
+      localResult?.result?.leituraBase ||
+      "Leitura concluída.";
+
+    setText("respostaIA", summary);
+    setText("resumoOperacional", summary);
+
+    saveLoopMemory({
+      score: localScore,
+      fase: localFase,
+      label,
+      summary
+    });
+
+    updateLoopMemoryUI();
+  }
+
   async function bindCRSControls() {
     const btnStart = document.getElementById("btnStartCRS");
     const btnPause = document.getElementById("btnPauseCRS");
     const btnRestart = document.getElementById("btnRestartCRS");
     const btnStop = document.getElementById("btnStopCRS");
     const btnConectarPC = document.getElementById("btnConectarPC");
+    const btnOuvirResposta = document.getElementById("btnOuvirResposta");
+    const btnContinuarLoop = document.getElementById("btnContinuarLoop");
 
     if (btnStart) {
       btnStart.addEventListener("click", async () => {
@@ -110,6 +205,7 @@
           "painelMensagem",
           "Sessão reiniciada. Recomece com mais presença e direção."
         );
+        setText("respostaIA", "A resposta da ferramenta aparecerá aqui depois da próxima leitura.");
       });
     }
 
@@ -133,17 +229,20 @@
           progress.direcao || "Continue praticando com calma e constância."
         );
         setText("painelMensagem", result.leituraBase || "Sessão registrada.");
-        setText("crsStatus", "finalizado");
+        setText("crsStatus", "analisando");
 
         if (btnConectarPC && result.fase === "Apto") {
           btnConectarPC.classList.remove("btn-secondary");
           btnConectarPC.classList.add("btn-primary");
         }
 
+        const tema = document.getElementById("falaTema")?.value?.trim() || "fala livre";
+        const objetivo = document.getElementById("falaObjetivo")?.value?.trim() || "";
+
         const cloudResponse = await window.ELAYON_CRS.sendToCloud({
-          context: "fala livre",
+          context: tema,
           transcript_raw: "",
-          source_text: ""
+          source_text: objetivo
         });
 
         if (cloudResponse?.ok && cloudResponse?.data) {
@@ -157,28 +256,49 @@
             "Leitura em nuvem concluída com sucesso.";
 
           setText("painelMensagem", summary);
+          setText("respostaIA", summary);
+          setText("resumoOperacional", summary);
+          setText("crsStatus", "leitura pronta");
+
+          fillCockpitReading(
+            JSON.parse(localStorage.getItem("elayon_last_result") || "null"),
+            cloudResponse.data
+          );
+
           falarTexto(summary);
-
-          if (document.body.dataset.page !== "painel") {
-            const next =
-              window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
-            window.location.href = next;
-          }
-
           return;
         }
 
         if (cloudResponse?.skipped) {
           console.warn("Nuvem ignorada:", cloudResponse.reason);
+          setText("crsStatus", "nuvem ignorada");
         } else {
           console.warn("Falha na resposta da nuvem:", cloudResponse);
+          setText("crsStatus", "falha na nuvem");
         }
 
-        if (document.body.dataset.page !== "painel") {
-          const next =
-            window.ELAYON_CONFIG?.routes?.resultPage || "resultado.html";
-          window.location.href = next;
-        }
+        const localResult = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
+        fillCockpitReading(localResult, null);
+      });
+    }
+
+    if (btnOuvirResposta) {
+      btnOuvirResposta.addEventListener("click", () => {
+        const texto = document.getElementById("respostaIA")?.textContent || "";
+        falarTexto(texto);
+      });
+    }
+
+    if (btnContinuarLoop) {
+      btnContinuarLoop.addEventListener("click", async () => {
+        if (!window.ELAYON_CRS) return;
+
+        await window.ELAYON_CRS.start();
+        setText("crsStatus", "captando");
+        setText(
+          "painelMensagem",
+          "Novo ciclo iniciado. Continue falando e ajuste seu foco com base na leitura anterior."
+        );
       });
     }
 
@@ -244,7 +364,16 @@
   document.addEventListener("DOMContentLoaded", async () => {
     await hydrateUser();
     await bindCRSControls();
+    updateLoopMemoryUI();
     fillResultado();
     bindCheckout();
   });
 })();
+
+Considerei essa parte atual e o print. 
+
+Observa a fala, não tem pra onde ir. Esse ui aí tá apontando pro página errada. Precisamos corrigir limpo pq a estrutura ta linda. 
+
+Percebe ? 
+Ficou bonito mas tá usando a página de resultado. Acho que tá apontando pra ela. 
+E da uma olhada na interação viva e nas páginas e ideias em volta.  need answer fix no redirect maybe old cached or page includes result page above? The screenshot first shows result page likely user navigated there manually. Need point out ui.js no redirect maybe old version still had redirect. Need likely result.html still linked by buttons. Need inspect new ui.js no redirect; ensure fala-livre.html doesn't include result.html? Could mention app.js route protection not issue. Need perhaps clear browser cache / hard reload on github pages. Also screenshot shows top of result page then cockpit below maybe maybe merged pages? Wait images show result page screenshot then cockpit screenshot likely separate. Need answer concise with clean fix and note likely old cached ui.js or still using old HTML with links. Maybe bindStop on current ui still no redirect? In provided ui.js, indeed no redirect. So issue maybe button labeled "Ler agora" but going result because HTML id mismatched? Actually if clicking "Ler agora" maybe form submit? Buttons type="button" yes. Could be reading cloud response then browser auto navigating because btnStop in old cached js. So tell to version bump/cachbuster. Also maybe result page still auto open due to anchor elsewhere? Let's answer with likely cause and exact checks: ensure fala-livre.html has no href resultado, remove old script caching by js/ui.js?v=3 and crs.js?v=3. Provide updated script tags. Mention old page top screenshot was result page separate not embedded. Need maybe update config routes not used. Let's craft.
