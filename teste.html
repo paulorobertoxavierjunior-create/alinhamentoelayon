@@ -1,35 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <title>Teste CRS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teste CRS Cloud</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 20px;
+      background: #f6fbfc;
+      color: #173b42;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      line-height: 1.5;
+    }
+
+    button {
+      background: #173b42;
+      color: #fff;
+      border: 0;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 12px 0 16px;
+    }
+
+    .box {
+      background: #fff;
+      border: 1px solid #d8e7ea;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .status {
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 13px;
+      line-height: 1.4;
+      margin: 0;
+    }
+  </style>
 </head>
 <body>
 
-<button onclick="testar()">Testar CRS</button>
+  <h1>Teste CRS na nuvem</h1>
 
-<pre id="res"></pre>
+  <p>
+    Este botão envia uma requisição real para o backend do CRS no Render.
+  </p>
 
-<script>
-async function testar() {
-  const res = await fetch("https://crs-elayon.onrender.com/api/crs/analisar", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      context: "teste",
-      transcript_raw: "fala de teste",
-      duration_sec: 10,
-      silence_pct: 30,
-      pause_count: 5,
-      mean_pause_ms: 300
-    })
-  });
+  <button id="btnTestar" type="button">Testar CRS</button>
 
-  const data = await res.json();
-  document.getElementById("res").innerText = JSON.stringify(data, null, 2);
-}
-</script>
+  <div class="box">
+    <div class="status" id="statusBox">Status: aguardando teste</div>
+    <pre id="resBox">Ainda sem resposta.</pre>
+  </div>
+
+  <script>
+    const API_URL = "https://crs-elayon.onrender.com/api/crs/analisar";
+
+    async function testarCRS() {
+      const statusBox = document.getElementById("statusBox");
+      const resBox = document.getElementById("resBox");
+
+      statusBox.textContent = "Status: acordando backend e enviando teste...";
+      resBox.textContent = "Aguarde. No plano free do Render pode levar alguns segundos.";
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            context: "teste cloud",
+            transcript_raw: "fala de teste enviada pelo front",
+            duration_sec: 12.5,
+            silence_pct: 31.2,
+            pause_count: 4,
+            mean_pause_ms: 280,
+            source_text: "texto base opcional",
+            timeline_events: [
+              { type: "pausa curta", startSec: 1.2, endSec: 1.7, durationMs: 500 }
+            ],
+            uploaded_file_name: ""
+          })
+        });
+
+        const text = await response.text();
+
+        if (!response.ok) {
+          statusBox.textContent = `Status: erro HTTP ${response.status}`;
+          resBox.textContent = text || "Resposta vazia.";
+          return;
+        }
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          statusBox.textContent = "Status: resposta recebida, mas não veio JSON válido";
+          resBox.textContent = text;
+          return;
+        }
+
+        statusBox.textContent = "Status: CRS respondeu com sucesso";
+        resBox.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        statusBox.textContent = "Status: falha na chamada";
+        resBox.textContent =
+          "Erro capturado:\n\n" +
+          (error && error.message ? error.message : String(error)) +
+          "\n\nSe aparecer erro de CORS, me manda print que eu ajusto o backend.";
+      }
+    }
+
+    document.getElementById("btnTestar").addEventListener("click", testarCRS);
+  </script>
 
 </body>
 </html>
