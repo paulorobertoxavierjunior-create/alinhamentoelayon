@@ -56,6 +56,7 @@
         >
 
         <div class="cta-row" style="margin-top:12px;">
+          <button class="btn-primary" id="btnMic" type="button">Ligar microfone</button>
           <button class="btn-primary" id="btnStartCRS" type="button">Ativar presença</button>
           <button class="btn-secondary" id="btnPauseCRS" type="button">Pausar</button>
           <button class="btn-secondary" id="btnRestartCRS" type="button">Recomeçar</button>
@@ -75,126 +76,11 @@
             Aguardando início da fala...
           </p>
         </div>
-      </article>
-    </section>
-
-    <section class="quick-grid">
-      <article class="quick-card">
-        <h3>Painel de sinais</h3>
-
-        <div class="mini-meter-list">
-          <div class="mini-meter-item">
-            <span>Presença</span>
-            <small data-crs-label="presenca">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="presenca" style="width:12%"></div>
-          </div>
-
-          <div class="mini-meter-item">
-            <span>Clareza</span>
-            <small data-crs-label="clareza">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="clareza" style="width:12%"></div>
-          </div>
-
-          <div class="mini-meter-item">
-            <span>Ritmo</span>
-            <small data-crs-label="ritmo">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="ritmo" style="width:12%"></div>
-          </div>
-
-          <div class="mini-meter-item">
-            <span>Firmeza</span>
-            <small data-crs-label="firmeza">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="firmeza" style="width:12%"></div>
-          </div>
-
-          <div class="mini-meter-item">
-            <span>Continuidade</span>
-            <small data-crs-label="continuidade">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="continuidade" style="width:12%"></div>
-          </div>
-
-          <div class="mini-meter-item">
-            <span>Estabilidade</span>
-            <small data-crs-label="estabilidade">12%</small>
-          </div>
-          <div class="meter-track">
-            <div class="meter-fill" data-crs="estabilidade" style="width:12%"></div>
-          </div>
-        </div>
-      </article>
-
-      <article class="quick-card">
-        <h3>Memória curta</h3>
-        <p>Leitura comparativa dos ciclos mais recentes.</p>
 
         <div class="status-row" style="margin-top:12px;">
-          <div class="status-pill">Atual: <span id="memoriaAtual">—</span></div>
-          <div class="status-pill">Anterior: <span id="memoriaAnterior">—</span></div>
-          <div class="status-pill">Tendência: <span id="memoriaTendencia">—</span></div>
-        </div>
-
-        <div class="message-box" style="margin-top:12px;">
-          <p id="memoriaResumo">
-            Ainda não há histórico curto suficiente para comparação.
-          </p>
+          <div class="status-pill">Sessão: <span id="kpiSess">não iniciada</span></div>
+          <div class="status-pill">Gravado: <span id="kpiRec">00:00</span></div>
+          <div class="status-pill">Estado: <span id="kpiState">parado</span></div>
         </div>
       </article>
     </section>
-
-    <section class="quick-grid">
-      <article class="quick-card">
-        <h3>Resposta do sistema</h3>
-        <p>
-          A ferramenta devolve uma leitura curta, objetiva e útil para você ajustar a próxima fala.
-        </p>
-
-        <div class="message-box" style="margin-top:12px;">
-          <p id="respostaIA" style="min-height:120px;">
-            A resposta da ferramenta aparecerá aqui depois da primeira leitura.
-          </p>
-        </div>
-
-        <div class="cta-row" style="margin-top:12px;">
-          <button class="btn-secondary" id="btnOuvirResposta" type="button">Ouvir resposta</button>
-          <button class="btn-primary" id="btnContinuarLoop" type="button">Continuar falando</button>
-        </div>
-      </article>
-
-      <article class="quick-card">
-        <h3>Leitura operacional</h3>
-        <div class="message-box" style="margin:0;">
-          <p id="resumoOperacional">
-            Use esta área para observar foco, continuidade e prontidão ao longo da interação.
-          </p>
-        </div>
-
-        <div class="footer-note" style="margin-top:16px;">
-          Falar. Observar. Ajustar. Continuar.
-        </div>
-      </article>
-    </section>
-
-    <section class="cta-row">
-      <a class="btn-secondary" href="painel.html">Voltar ao painel</a>
-    </section>
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/crs.js"></script>
-  <script src="js/engine.js"></script>
-  <script src="js/reader.js"></script>
-  <script src="js/ui.js"></script>
-</body>
-</html>
