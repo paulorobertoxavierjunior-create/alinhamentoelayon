@@ -55,6 +55,42 @@
     return window.supabase.createClient(supabaseUrl, supabaseAnonKey);
   }
 
+  function getCloudCRSEndpoint() {
+    return (
+      getConfig("cloud.crsEndpoint", "") ||
+      "https://nucleo-crs-elayon.onrender.com/api/crs/analisar"
+    );
+  }
+
+  async function callCRS(payload = {}) {
+    const endpoint = getCloudCRSEndpoint();
+
+    if (!endpoint) {
+      throw new Error("Endpoint do CRS não configurado.");
+    }
+
+    const response = await fetch(endpoint, {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const text = await response.text();
+
+    if (!response.ok) {
+      throw new Error(`Erro HTTP ${response.status}: ${text || "sem resposta"}`);
+    }
+
+    try {
+      return JSON.parse(text);
+    } catch {
+      throw new Error("O CRS respondeu, mas não retornou JSON válido.");
+    }
+  }
+
   async function getSession() {
     const supabase = getSupabaseClient();
     if (!supabase) return null;
@@ -76,6 +112,7 @@
 
   function persistAuthUser(user) {
     if (!user) return;
+
     localStorage.setItem(
       "elayon_auth_user",
       JSON.stringify({
@@ -102,7 +139,6 @@
 
   async function protectRoute() {
     const page = getPageName();
-
     if (!page) return;
 
     const session = await getSession();
@@ -250,7 +286,11 @@
         return;
       }
 
-      setMessage("signupMessage", "Cadastro realizado. Verifique seu e-mail para confirmar o acesso.", "success");
+      setMessage(
+        "signupMessage",
+        "Cadastro realizado. Verifique seu e-mail para confirmar o acesso.",
+        "success"
+      );
 
       setTimeout(() => {
         goTo("confirmacao", "confirmacao.html");
@@ -290,7 +330,7 @@
       });
 
       if (error) {
-        setMessage("recoveryMessage", "Erro ao enviar recuperação.", "error");
+        setMessage("recoveryMessage", error.message || "Erro ao enviar recuperação.", "error");
         return;
       }
 
@@ -341,7 +381,7 @@
       });
 
       if (error) {
-        setMessage("resetMessage", "Erro ao redefinir senha.", "error");
+        setMessage("resetMessage", error.message || "Erro ao redefinir senha.", "error");
         return;
       }
 
@@ -393,6 +433,25 @@
     });
   }
 
+  async function hydrateProfilePage() {
+    const page = getPageName();
+    if (page !== "perfil") return;
+
+    const user = await getUser();
+    if (!user) return;
+
+    const nome = user.user_metadata?.nome || "Não informado";
+    const email = user.email || "Não informado";
+
+    const nomeBox = document.getElementById("profileName");
+    const emailBox = document.getElementById("profileEmail");
+    const statusBox = document.getElementById("profileStatus");
+
+    if (nomeBox) nomeBox.textContent = nome;
+    if (emailBox) emailBox.textContent = email;
+    if (statusBox) statusBox.textContent = "Ativa";
+  }
+
   async function bindPageEvents() {
     bindPasswordToggle("togglePassword", "senha");
     bindPasswordToggle("toggleSignupPassword", "signupPassword");
@@ -426,10 +485,18 @@
     }
   }
 
+  window.ELAYON_APP = {
+    getSession,
+    getUser,
+    callCRS,
+    getCloudCRSEndpoint
+  };
+
   document.addEventListener("DOMContentLoaded", async () => {
     await bindAuthStateListener();
     await protectRoute();
     await redirectIfLoggedOnAuthPages();
     await bindPageEvents();
+    await hydrateProfilePage();
   });
 })();
