@@ -176,3 +176,41 @@
 
   window.ELAYON_CRS = CRS;
 })();
+
+// === EXTENSÃO VISUAL CRS (COCKPIT) ===
+
+CRS.visual = {
+  enabled: false,
+  raf: null,
+  cvFft: null,
+  ctxFft: null,
+
+  init() {
+    this.cvFft = document.getElementById("cvFft");
+    if (!this.cvFft) return;
+
+    this.ctxFft = this.cvFft.getContext("2d");
+    this.enabled = true;
+  },
+
+  draw(volume) {
+    if (!this.enabled || !this.ctxFft) return;
+
+    const ctx = this.ctxFft;
+    const w = this.cvFft.width = this.cvFft.offsetWidth;
+    const h = this.cvFft.height = 200;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const bars = 40;
+    const bw = w / bars;
+
+    for (let i = 0; i < bars; i++) {
+      const v = Math.random() * volume * 2;
+      const bh = v * h * 0.6;
+
+      ctx.fillStyle = "rgba(14,165,233,0.6)";
+      ctx.fillRect(i * bw, h - bh, bw * 0.8, bh);
+    }
+  }
+};
