@@ -4,376 +4,242 @@
     if (el) el.textContent = text;
   }
 
-  function falarTexto(texto) {
-    if (!texto || !("speechSynthesis" in window)) return;
-
-    const utterance = new SpeechSynthesisUtterance(texto);
-    utterance.lang = "pt-BR";
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    utterance.volume = 1.0;
+  function speak(text) {
+    if (!text || !("speechSynthesis" in window)) return;
 
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utterance);
+
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "pt-BR";
+    utter.rate = 1;
+    utter.pitch = 1;
+    utter.volume = 1;
+
+    window.speechSynthesis.speak(utter);
   }
 
-  function getPageModeKey() {
-    const page = document.body.dataset.page || "";
-    if (window.ELAYON_CONFIG?.modes?.[page]) return page;
-    return "fala-livre";
+  function getCockpitFields() {
+    return {
+      tema: (document.getElementById("falaTema")?.value || "").trim(),
+      objetivo: (document.getElementById("falaObjetivo")?.value || "").trim()
+    };
   }
 
-  function isCockpitPage() {
-    return document.body.dataset.page === "fala-livre";
-  }
-
-  async function getAuthUser() {
-    if (
-      !window.supabase ||
-      !window.ELAYON_CONFIG?.supabase?.url ||
-      !window.ELAYON_CONFIG?.supabase?.anonKey
-    ) {
-      return null;
+  function buildLocalReading(snapshot) {
+    if (!snapshot || !snapshot.average) {
+      return {
+        resumo: "Ainda não houve leitura suficiente para análise.",
+        tendencia: "inicial"
+      };
     }
 
-    const client = window.supabase.createClient(
-      window.ELAYON_CONFIG.supabase.url,
-      window.ELAYON_CONFIG.supabase.anonKey
+    const avg = snapshot.average;
+
+    const score = Math.round(
+      (
+        (avg.presenca || 0) +
+        (avg.clareza || 0) +
+        (avg.ritmo || 0) +
+        (avg.firmeza || 0) +
+        (avg.continuidade || 0) +
+        (avg.estabilidade || 0)
+      ) / 6
     );
 
-    const { data } = await client.auth.getSession();
-    return data?.session?.user || null;
-  }
+    let tendencia = "inicial";
+    if (score >= 75) tendencia = "alta";
+    else if (score >= 50) tendencia = "em ajuste";
+    else tendencia = "instável";
 
-  async function hydrateUser() {
-    const authUser = await getAuthUser();
-
-    const progress = window.ELAYON_ENGINE
-      ? window.ELAYON_ENGINE.getProgress()
-      : { fase: "Inato", sessoes: 0, ultimoScore: 0, direcao: "" };
-
-    if (authUser?.email) {
-      const nome = authUser.user_metadata?.nome || "Operador";
-      setText("painelLogin", `${nome} • ${authUser.email}`);
-      setText("perfilNome", nome);
-      setText("perfilEmail", authUser.email);
+    let resumo = "Sua fala mostrou sinais iniciais de presença.";
+    if (score >= 75) {
+      resumo = "Boa leitura. Você apresentou presença, continuidade e direção mais consistentes.";
+    } else if (score >= 50) {
+      resumo = "Leitura moderada. Há base real, mas ainda vale organizar mais a fala e sustentar melhor o fluxo.";
+    } else {
+      resumo = "Leitura inicial. Vale reduzir pausas longas e buscar mais firmeza na continuidade da fala.";
     }
 
-    setText("faseAtualPainel", progress.fase || "Inato");
-    setText("totalSessoesPainel", String(progress.sessoes || 0));
-    setText("ultimoScorePainel", String(progress.ultimoScore || 0));
-    setText(
-      "direcaoPainel",
-      progress.direcao || "Continue praticando com calma e constância."
-    );
+    return { resumo, tendencia, score };
   }
 
-  function saveLoopMemory(entry) {
-    const key = "elayon_loop_memory";
-    let items = [];
-
-    try {
-      items = JSON.parse(localStorage.getItem(key) || "[]");
-    } catch {}
-
-    items.push({
-      at: new Date().toISOString(),
-      ...entry
-    });
-
-    items = items.slice(-3);
-    localStorage.setItem(key, JSON.stringify(items));
-    return items;
-  }
-
-  function readLoopMemory() {
-    try {
-      return JSON.parse(localStorage.getItem("elayon_loop_memory") || "[]");
-    } catch {
-      return [];
-    }
-  }
-
-  function updateLoopMemoryUI() {
-    const items = readLoopMemory();
-    const atual = items[items.length - 1] || null;
-    const anterior = items[items.length - 2] || null;
-
-    setText("memoriaAtual", atual?.label || "—");
-    setText("memoriaAnterior", anterior?.label || "—");
-
-    if (!atual || !anterior) {
-      setText("memoriaTendencia", "inicial");
-      setText(
-        "memoriaResumo",
-        "Ainda não há histórico curto suficiente para comparação."
-      );
-      setText("crsTrend", "inicial");
-      return;
-    }
-
-    let tendencia = "mantendo";
-    if ((atual.score || 0) > (anterior.score || 0)) tendencia = "melhorando";
-    if ((atual.score || 0) < (anterior.score || 0)) tendencia = "oscilando";
-
-    setText("memoriaTendencia", tendencia);
-    setText("crsTrend", tendencia);
-    setText(
-      "memoriaResumo",
-      `Leitura atual: ${atual.label}. Comparada à anterior, a tendência está ${tendencia}.`
-    );
-  }
-
-  function classifyLoopLabel(score, fase) {
-    if (fase === "Apto" || score >= 75) return "foco alto";
-    if (fase === "Treinamento" || score >= 50) return "em ajuste";
-    return "instável";
-  }
-
-  function fillCockpitReading(localResult, cloudResult) {
-    if (!isCockpitPage()) return;
-
-    const localScore = localResult?.result?.score || 0;
-    const localFase = localResult?.result?.fase || "Inato";
-    const label = classifyLoopLabel(localScore, localFase);
-
-    setText("memoriaAtual", label);
-
-    const summary =
-      cloudResult?.user_report?.summary ||
-      localResult?.result?.leituraBase ||
-      "Leitura concluída.";
-
-    setText("respostaIA", summary);
-    setText("resumoOperacional", summary);
-
-    saveLoopMemory({
-      score: localScore,
-      fase: localFase,
-      label,
-      summary
-    });
-
-    updateLoopMemoryUI();
-  }
-
-  async function bindCRSControls() {
+  async function bindCockpit() {
+    const btnMic = document.getElementById("btnMic");
     const btnStart = document.getElementById("btnStartCRS");
     const btnPause = document.getElementById("btnPauseCRS");
     const btnRestart = document.getElementById("btnRestartCRS");
     const btnStop = document.getElementById("btnStopCRS");
-    const btnConectarPC = document.getElementById("btnConectarPC");
-    const btnOuvirResposta = document.getElementById("btnOuvirResposta");
-    const btnContinuarLoop = document.getElementById("btnContinuarLoop");
+    const btnOuvir = document.getElementById("btnOuvirResposta");
+    const btnContinuar = document.getElementById("btnContinuarLoop");
+
+    if (!window.ELAYON_CRS) {
+      console.error("ELAYON_CRS não encontrado.");
+      return;
+    }
+
+    if (btnMic) {
+      btnMic.addEventListener("click", async () => {
+        try {
+          await window.ELAYON_CRS.start();
+          await window.ELAYON_CRS.stop();
+
+          setText("crsStatus", "microfone pronto");
+          setText("kpiState", "microfone autorizado");
+          setText("painelMensagem", "Microfone autorizado. Agora você pode ativar a presença.");
+        } catch (err) {
+          console.error(err);
+          setText("crsStatus", "falha no microfone");
+          setText("kpiState", "erro");
+          setText("painelMensagem", "Não foi possível acessar o microfone.");
+        }
+      });
+    }
 
     if (btnStart) {
       btnStart.addEventListener("click", async () => {
-        if (!window.ELAYON_CRS) return;
+        try {
+          const fields = getCockpitFields();
 
-        await window.ELAYON_CRS.start();
-        setText("crsStatus", "captando");
-        setText(
-          "painelMensagem",
-          "Captação iniciada. Fale com naturalidade e observe a média da sua presença."
-        );
+          await window.ELAYON_CRS.start();
+
+          setText("crsStatus", "captando");
+          setText("kpiState", "captando");
+          setText("kpiSess", fields.tema || "fala livre");
+          setText("kpiRec", "ao vivo");
+          setText(
+            "painelMensagem",
+            `Captação iniciada${fields.tema ? ` para o tema "${fields.tema}"` : ""}. Fale com naturalidade.`
+          );
+        } catch (err) {
+          console.error(err);
+          setText("crsStatus", "erro ao iniciar");
+          setText("kpiState", "erro");
+        }
       });
     }
 
     if (btnPause) {
       btnPause.addEventListener("click", async () => {
-        if (!window.ELAYON_CRS) return;
-
-        await window.ELAYON_CRS.stop();
-        setText("crsStatus", "pausado");
-        setText(
-          "painelMensagem",
-          "Pausa feita. Respire, reorganize a ideia e continue quando quiser."
-        );
+        try {
+          await window.ELAYON_CRS.stop();
+          setText("crsStatus", "pausado");
+          setText("kpiState", "pausado");
+          setText("painelMensagem", "Sessão pausada. Respire, reorganize a ideia e continue quando quiser.");
+        } catch (err) {
+          console.error(err);
+        }
       });
     }
 
     if (btnRestart) {
       btnRestart.addEventListener("click", async () => {
-        if (!window.ELAYON_CRS) return;
+        try {
+          await window.ELAYON_CRS.stop();
 
-        await window.ELAYON_CRS.stop();
-        window.ELAYON_CRS.reset();
-        window.ELAYON_CRS.render();
+          if (window.ELAYON_CRS.historyVolume) window.ELAYON_CRS.historyVolume = [];
+          if (window.ELAYON_CRS.historySilence) window.ELAYON_CRS.historySilence = [];
+          if (window.ELAYON_CRS.current) {
+            window.ELAYON_CRS.current = {
+              presenca: 12,
+              clareza: 12,
+              ritmo: 12,
+              firmeza: 12,
+              continuidade: 12,
+              estabilidade: 12
+            };
+          }
 
-        setText("crsStatus", "reiniciado");
-        setText(
-          "painelMensagem",
-          "Sessão reiniciada. Recomece com mais presença e direção."
-        );
-        setText("respostaIA", "A resposta da ferramenta aparecerá aqui depois da próxima leitura.");
+          if (window.ELAYON_CRS.renderBars) {
+            window.ELAYON_CRS.renderBars();
+          }
+
+          setText("crsStatus", "reiniciado");
+          setText("kpiState", "reiniciado");
+          setText("kpiRec", "00:00");
+          setText("painelMensagem", "Sessão reiniciada. Pronto para novo ciclo.");
+          setText("respostaIA", "A resposta da ferramenta aparecerá aqui depois da leitura.");
+          setText("resumoOperacional", "Use esta área para observar foco, continuidade e prontidão ao longo da interação.");
+        } catch (err) {
+          console.error(err);
+        }
       });
     }
 
     if (btnStop) {
       btnStop.addEventListener("click", async () => {
-        if (!window.ELAYON_CRS || !window.ELAYON_ENGINE) return;
+        try {
+          await window.ELAYON_CRS.stop();
 
-        await window.ELAYON_CRS.stop();
+          const snapshot = window.ELAYON_CRS.snapshot
+            ? window.ELAYON_CRS.snapshot()
+            : { average: window.ELAYON_CRS.current || {} };
 
-        const snapshot = window.ELAYON_CRS.snapshot();
-        const modeKey = getPageModeKey();
-        const result = await window.ELAYON_ENGINE.commitSession(snapshot, modeKey);
+          const reading = buildLocalReading(snapshot);
 
-        setText("faseAtualPainel", result.fase || "Inato");
-
-        const progress = window.ELAYON_ENGINE.getProgress();
-        setText("totalSessoesPainel", String(progress.sessoes || 0));
-        setText("ultimoScorePainel", String(progress.ultimoScore || 0));
-        setText(
-          "direcaoPainel",
-          progress.direcao || "Continue praticando com calma e constância."
-        );
-        setText("painelMensagem", result.leituraBase || "Sessão registrada.");
-        setText("crsStatus", "analisando");
-
-        if (btnConectarPC && result.fase === "Apto") {
-          btnConectarPC.classList.remove("btn-secondary");
-          btnConectarPC.classList.add("btn-primary");
-        }
-
-        const tema = document.getElementById("falaTema")?.value?.trim() || "fala livre";
-        const objetivo = document.getElementById("falaObjetivo")?.value?.trim() || "";
-
-        const cloudResponse = await window.ELAYON_CRS.sendToCloud({
-          context: tema,
-          transcript_raw: "",
-          source_text: objetivo
-        });
-
-        if (cloudResponse?.ok && cloudResponse?.data) {
-          localStorage.setItem(
-            "elayon_last_cloud_result",
-            JSON.stringify(cloudResponse.data)
-          );
-
-          const summary =
-            cloudResponse.data?.user_report?.summary ||
-            "Leitura em nuvem concluída com sucesso.";
-
-          setText("painelMensagem", summary);
-          setText("respostaIA", summary);
-          setText("resumoOperacional", summary);
           setText("crsStatus", "leitura pronta");
+          setText("kpiState", "finalizado");
+          setText("crsTrend", reading.tendencia);
+          setText("memoriaAtual", reading.tendencia);
+          setText("memoriaTendencia", reading.tendencia);
+          setText("memoriaResumo", reading.resumo);
+          setText("respostaIA", reading.resumo);
+          setText("resumoOperacional", reading.resumo);
+          setText("painelMensagem", "Leitura concluída. Você pode ouvir a resposta ou continuar falando.");
 
-          fillCockpitReading(
-            JSON.parse(localStorage.getItem("elayon_last_result") || "null"),
-            cloudResponse.data
+          localStorage.setItem(
+            "elayon_last_result",
+            JSON.stringify({
+              snapshot,
+              result: {
+                score: reading.score || 0,
+                fase:
+                  (reading.score || 0) >= 75
+                    ? "Apto"
+                    : (reading.score || 0) >= 50
+                    ? "Treinamento"
+                    : "Inato",
+                leituraBase: reading.resumo,
+                direction: reading.resumo,
+                averages: snapshot.average || {}
+              },
+              savedAt: new Date().toISOString()
+            })
           );
 
-          falarTexto(summary);
-          return;
+          speak(reading.resumo);
+        } catch (err) {
+          console.error(err);
+          setText("crsStatus", "falha na leitura");
+          setText("kpiState", "erro");
         }
-
-        if (cloudResponse?.skipped) {
-          console.warn("Nuvem ignorada:", cloudResponse.reason);
-          setText("crsStatus", "nuvem ignorada");
-        } else {
-          console.warn("Falha na resposta da nuvem:", cloudResponse);
-          setText("crsStatus", "falha na nuvem");
-        }
-
-        const localResult = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
-        fillCockpitReading(localResult, null);
       });
     }
 
-    if (btnOuvirResposta) {
-      btnOuvirResposta.addEventListener("click", () => {
-        const texto = document.getElementById("respostaIA")?.textContent || "";
-        falarTexto(texto);
+    if (btnOuvir) {
+      btnOuvir.addEventListener("click", () => {
+        const text = document.getElementById("respostaIA")?.textContent || "";
+        speak(text);
       });
     }
 
-    if (btnContinuarLoop) {
-      btnContinuarLoop.addEventListener("click", async () => {
-        if (!window.ELAYON_CRS) return;
-
-        await window.ELAYON_CRS.start();
-        setText("crsStatus", "captando");
-        setText(
-          "painelMensagem",
-          "Novo ciclo iniciado. Continue falando e ajuste seu foco com base na leitura anterior."
-        );
-      });
-    }
-
-    if (btnConectarPC) {
-      btnConectarPC.addEventListener("click", () => {
-        const progress = window.ELAYON_ENGINE?.getProgress?.();
-
-        if (!progress || progress.fase !== "Apto") {
-          alert(
-            "Continue praticando. A conexão com o Elayon PC será liberada quando você atingir a fase Apto."
+    if (btnContinuar) {
+      btnContinuar.addEventListener("click", async () => {
+        try {
+          await window.ELAYON_CRS.start();
+          setText("crsStatus", "captando");
+          setText("kpiState", "novo ciclo");
+          setText(
+            "painelMensagem",
+            "Novo ciclo iniciado. Continue falando com base na leitura anterior."
           );
-          return;
+        } catch (err) {
+          console.error(err);
         }
-
-        alert("Conexão simbólica com Elayon PC liberada.");
       });
     }
-  }
-
-  function fillResultado() {
-    if (!window.ELAYON_READER) return;
-
-    let localResult = null;
-    let cloudResult = null;
-
-    try {
-      localResult = JSON.parse(localStorage.getItem("elayon_last_result") || "null");
-    } catch {}
-
-    try {
-      cloudResult = JSON.parse(
-        localStorage.getItem("elayon_last_cloud_result") || "null"
-      );
-    } catch {}
-
-    const reading = window.ELAYON_READER.buildReading(localResult);
-
-    setText("resultadoMomentos", reading.momentos);
-    setText("resultadoFortes", reading.fortes);
-    setText("resultadoMelhorias", reading.melhorias);
-    setText("resultadoEmocional", reading.emocional);
-    setText("resultadoNivel", reading.nivel);
-    setText("resultadoScore", String(reading.score));
-    setText("resultadoFase", reading.fase);
-    setText("resultadoProximo", reading.proximo);
-
-    if (cloudResult?.user_report?.summary) {
-      setText("resultadoEmocional", cloudResult.user_report.summary);
-    }
-  }
-
-  function bindCheckout() {
-    const btn = document.getElementById("btnCheckoutFinal");
-    if (!btn) return;
-
-    btn.addEventListener("click", () => {
-      alert(
-        "Adesão simbólica confirmada. Próxima etapa: expandir a conexão entre presença, trabalho e automação ética."
-      );
-    });
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    await hydrateUser();
-    await bindCRSControls();
-    updateLoopMemoryUI();
-    fillResultado();
-    bindCheckout();
+    await bindCockpit();
   });
 })();
-
-Considerei essa parte atual e o print. 
-
-Observa a fala, não tem pra onde ir. Esse ui aí tá apontando pro página errada. Precisamos corrigir limpo pq a estrutura ta linda. 
-
-Percebe ? 
-Ficou bonito mas tá usando a página de resultado. Acho que tá apontando pra ela. 
-E da uma olhada na interação viva e nas páginas e ideias em volta.  need answer fix no redirect maybe old cached or page includes result page above? The screenshot first shows result page likely user navigated there manually. Need point out ui.js no redirect maybe old version still had redirect. Need likely result.html still linked by buttons. Need inspect new ui.js no redirect; ensure fala-livre.html doesn't include result.html? Could mention app.js route protection not issue. Need perhaps clear browser cache / hard reload on github pages. Also screenshot shows top of result page then cockpit below maybe maybe merged pages? Wait images show result page screenshot then cockpit screenshot likely separate. Need answer concise with clean fix and note likely old cached ui.js or still using old HTML with links. Maybe bindStop on current ui still no redirect? In provided ui.js, indeed no redirect. So issue maybe button labeled "Ler agora" but going result because HTML id mismatched? Actually if clicking "Ler agora" maybe form submit? Buttons type="button" yes. Could be reading cloud response then browser auto navigating because btnStop in old cached js. So tell to version bump/cachbuster. Also maybe result page still auto open due to anchor elsewhere? Let's answer with likely cause and exact checks: ensure fala-livre.html has no href resultado, remove old script caching by js/ui.js?v=3 and crs.js?v=3. Provide updated script tags. Mention old page top screenshot was result page separate not embedded. Need maybe update config routes not used. Let's craft.
